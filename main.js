@@ -129,7 +129,7 @@ class Game {
     overlay.style.transform = 'translate(-50%, -50%)';
     overlay.style.width = '250px';
     overlay.style.padding = '20px';
-    overlay.style.backgroundColor = 'blue';
+    overlay.style.backgroundColor = 'green';
     overlay.style.borderRadius = '20px';
     overlay.style.textAlign = 'center';
     overlay.style.zIndex = '100';
