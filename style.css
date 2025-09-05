@@ -19,22 +19,34 @@ body {
   background: #fff;
   overflow: hidden;
   border-radius: 30px;
+
+    /* Fondo oceánico */
+  background-image: url('assets/ocean.png'); /* tu imagen de agua */
+  background-repeat: repeat-x;
+  background-position: 0 0;
+  background-size: cover;
 }
+
 
 /* Tiburón gif */
 .shark {
   position: absolute;
-  width: 80px;
+  width: 160px;
   height: auto;
 }
 
-/* Puntos rojos (de prueba) */
-.dot {
+/* Patitos que cambian a rojo */
+.duck {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: red;
+  width: 40px;
+  height: 40px;
+  transition: filter 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.duck.eaten {
+  filter: hue-rotate(0deg) saturate(10) brightness(1); /* lo hace rojo intenso */
+  transform: scale(0.5);
+  opacity: 0.7;
 }
 
 /* Marcador */
