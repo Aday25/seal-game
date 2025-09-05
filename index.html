@@ -1,15 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chompy Game</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-        <img src="assets/title.png" alt="Jaws Title" id="game-title">
-    <div id="puntos">Puntos: 0</div>
-    <div id="game-container"></div>
-    <script type="module" src="main.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chompy Game</title>
+
+  <!-- Meta para compartir en WhatsApp y redes sociales -->
+  <meta property="og:title" content="Chompy Game" />
+  <meta property="og:description" content="¡Atrapa a todos los patitos y diviértete!" />
+  <meta property="og:image" content="assets/cover.png" />
+  <meta property="og:type" content="website" />
+
+  <!-- Favicon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>🦈</text></svg>">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Pantalla de presentación -->
+  <div id="cover-screen">
+    <img src="assets/cover.png" alt="Portada del juego">
+    <button id="play-btn">PLAY</button>
+  </div>
+
+  <!-- Juego -->
+  <img src="assets/title.png" alt="Jaws Title" id="game-title">
+  <div id="puntos">Puntos: 0</div>
+
+  <div id="game-container">
+    <!-- Botón About Me -->
+    <a href="about-me.html" id="about-me-button" style="display: none;">
+      <img src="assets/me.png" alt="About Me">
+      <p>About me 🦈</p>
+    </a>
+
+    <!-- Botones de sonido -->
+    <img id="music-button" src="assets/audio-on.png" alt="Music Button" style="display: none;">
+    <img id="duck-button" src="assets/duck-on.png" alt="Duck Sound Button" style="display: none;">
+  </div>
+
+  <!-- Controles de móvil -->
+  <div id="mobile-controls">
+    <button id="up-btn">▲</button>
+    <button id="down-btn">▼</button>
+    <button id="left-btn">◀</button>
+    <button id="right-btn">▶</button>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+
 </html>

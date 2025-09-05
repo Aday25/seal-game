@@ -1,26 +1,65 @@
-/* Fondo de la página */
+/* ===== Fondo de la página ===== */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   overflow: hidden;
   background-image: url('assets/background-image.png');
-  /* fondo general */
   background-size: cover;
   background-position: center;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
 }
 
-/* Imagen de título encima del juego */
+
+/* ===== Pantalla de presentación ===== */
+#cover-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+}
+
+/* Imagen de portada */
+#cover-screen img {
+  width: 80%;
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 20px;
+}
+
+/* Botón Play */
+#cover-screen button {
+  padding: 15px 30px;
+  font-size: 24px;
+  border-radius: 15px;
+  border: none;
+  background-color: #ffffffaa;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#cover-screen button:hover {
+  background-color: red;
+  color: #fff;
+}
+
+/* ===== Imagen de título encima del juego ===== */
 #game-title {
   width: 260px;
-  /* ajusta según necesites */
   margin-top: 20px;
 }
 
-/* Contenedor del juego */
+/* ===== Contenedor del juego ===== */
 #game-container {
   position: relative;
   width: 800px;
@@ -29,24 +68,34 @@ body {
   border: 10px solid #6d6d6d;
   overflow: hidden;
   border-radius: 30px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9); /* si quieres que sea transparente cambia 0.9 a algo más bajo */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 
-  /* Fondo oceánico animado */
   background-image: url('assets/ocean.png');
   background-repeat: repeat-x;
   background-position: 0 0;
   background-size: cover;
 }
 
-/* Tiburón */
+#game-container p {
+  color:#1b034b;
+  font-size: 30px;
+}
+
+/* ===== Animación del agua ===== */
+@keyframes moveWater {
+  from { background-position-x: 0; }
+  to { background-position-x: 800px; }
+}
+
+/* ===== Tiburón ===== */
 .shark {
   position: absolute;
   width: 160px;
   height: auto;
 }
 
-/* Patitos flotando */
+/* ===== Patitos flotando ===== */
 .duck {
   position: absolute;
   width: 40px;
@@ -56,16 +105,11 @@ body {
 }
 
 @keyframes floatDuck {
-  0% {
-    transform: translateY(0);
-  }
-
-  100% {
-    transform: translateY(-10px);
-  }
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
 }
 
-/* Patito comido: rojo y desapareciendo */
+/* Patito comido */
 .duck.eaten {
   filter: hue-rotate(0deg) saturate(10) brightness(1);
   transform: scale(0.5);
@@ -84,9 +128,219 @@ body {
   z-index: 0;
 }
 
-/* Marcador */
+/* ===== Marcador ===== */
 #puntos {
   font-size: 20px;
   text-align: center;
   margin: 10px 0;
+}
+
+/* ===== Controles móviles ===== */
+#mobile-controls {
+  display: none;
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  gap: 10px;
+  z-index: 1000;
+}
+
+#mobile-controls button {
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  border-radius: 10px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+/* ===== Botones fijos arriba ===== */
+#about-me-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  position: fixed;
+  top: 15px;
+  left: 60px;
+  z-index: 2000;
+}
+
+#about-me-button img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid #5ca0d7;
+  cursor: pointer;
+}
+
+#about-me-button p {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #1b034b;
+}
+
+#music-button {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  z-index: 2000;
+  transition: transform 0.2s ease;
+}
+
+#music-button:hover {
+  transform: scale(1.1);
+}
+
+#duck-button {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  position: fixed;
+  top: 25px;
+  right: 110px;
+  border-radius: 50%;
+  z-index: 2000;
+}
+
+/* ==== Page about me ==== */
+.about-card {
+  width: 90%;
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: rgba(234, 200, 175, 0.95);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.avatar {
+  width: 150px;
+  height: 220px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  border: 2px solid #5ca0d7;
+
+}
+
+.about-card p {
+  margin: 10px 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.horizontal-list {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  gap: 15px;
+}
+
+.horizontal-list li {
+  margin: 0;
+}
+
+.about-card a {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+.about-card a:hover {
+  text-decoration: underline;
+}
+
+.disclaimer {
+  font-size: 12px;
+  color: #555;
+  margin-top: 15px;
+  padding: 10px 15px;
+  border-left: 4px solid #f39c12;
+  background-color: #fff3e0;
+  border-radius: 5px;
+  text-align: left;
+}
+
+.back-btn {
+  display: block;
+  text-align: center;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #cc1717;
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background-color: #005fa3;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  #game-container {
+    height: 65vh;
+  }
+  #game-title {
+    width: 180px;
+  }
+  #puntos {
+    font-size: 16px;
+  }
+  .shark {
+    width: 100px;
+  }
+  .duck {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  #game-container {
+    height: 55vh;
+    min-height: 250px;
+  }
+  #game-title {
+    width: 150px;
+    margin-top: 10px;
+  }
+  #about-me-button img {
+    width: 70px;
+    height: 70px;
+  }
+  #puntos {
+    font-size: 14px;
+  }
+  .shark {
+    width: 80px;
+  }
+  .duck {
+    width: 25px;
+    height: 25px;
+  }
+  #mobile-controls {
+    display: flex;
+  }
+  #mobile-controls button {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  #cover-screen img {
+    width: 90%;
+    max-width: 300px;
+  }
+  #cover-screen button {
+    font-size: 20px;
+    padding: 12px 25px;
+  }
 }

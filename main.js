@@ -1,86 +1,262 @@
-// Sonidos
+// ===== Sounds =====
 const duckSound = new Audio('assets/duck-sound.mpeg');
 const levelSound = new Audio('assets/jaws-theme.mp3');
 levelSound.loop = true;
 
-// Botón de música (arriba a la derecha de la pantalla, fuera del juego)
-const musicButton = document.createElement('img');
-musicButton.src = 'assets/audio-on.png';
-musicButton.style.width = '100px';
-musicButton.style.height = '100px';
-musicButton.style.cursor = 'pointer';
-musicButton.style.position = 'fixed';
-musicButton.style.top = '15px';
-musicButton.style.right = '15px';
-musicButton.style.zIndex = '2000'; // siempre encima
-document.body.appendChild(musicButton);
+// ===== Buttons =====
+const musicButton = document.getElementById('music-button');
+const aboutButton = document.getElementById('about-me-button');
+const duckButton = document.getElementById('duck-button');
+const playButton = document.getElementById('play-btn');
 
+// Hide buttons at start
+musicButton.style.display = "none";
+aboutButton.style.display = "none";
+duckButton.style.display = "none";
+
+// ===== States =====
 let musicOn = true;
+let duckOn = true;
+
+// ===== Music Button =====
 musicButton.addEventListener('click', () => {
-    if (musicOn) {
-        levelSound.pause();
-        musicButton.src = 'assets/audio-off.png';
-    } else {
-        levelSound.play();
-        musicButton.src = 'assets/audio-on.png';
-    }
-    musicOn = !musicOn;
+  if (musicOn) {
+    levelSound.pause();
+    musicButton.src = 'assets/audio-off.png';
+  } else {
+    levelSound.play();
+    musicButton.src = 'assets/audio-on.png';
+  }
+  musicOn = !musicOn;
 });
+
+// ===== Duck Mode Button =====
+duckButton.addEventListener('click', () => {
+  if (duckOn) {
+    duckButton.src = 'assets/duck-off.png';
+  } else {
+    duckButton.src = 'assets/duck-on.png';
+  }
+  duckOn = !duckOn;
+});
+
+// ===== Play Button =====
+let gameInstance = null;
+playButton.addEventListener('click', () => {
+  document.getElementById('cover-screen').style.display = 'none';
+  gameInstance = new Game();
+
+  musicButton.style.display = "block";
+  aboutButton.style.display = "flex";
+  duckButton.style.display = "block";
+
+  if (musicOn) levelSound.play();
+});
+
+// ===== Classes =====
+class Character {
+  constructor() {
+    this.x = 50; this.y = 300;
+    this.width = 80; this.height = 80; this.speed = 10;
+
+    this.element = document.createElement('img');
+    this.element.src = 'assets/shark.gif';
+    this.element.classList.add('shark');
+    this.updatePosition();
+  }
+
+  move(event) {
+    if (event.key === 'ArrowRight') { this.x += this.speed; this.element.style.transform = 'scaleX(1)'; }
+    if (event.key === 'ArrowLeft') { this.x -= this.speed; this.element.style.transform = 'scaleX(-1)'; }
+    if (event.key === 'ArrowUp') this.y -= this.speed;
+    if (event.key === 'ArrowDown') this.y += this.speed;
+
+    if (this.x < -this.width) this.x = 800;
+    if (this.x > 800) this.x = -this.width;
+    if (this.y < -this.height) this.y = 400;
+    if (this.y > 400) this.y = -this.height;
+
+    this.updatePosition();
+  }
+
+  updatePosition() {
+    this.element.style.left = `${this.x}px`;
+    this.element.style.top = `${this.y}px`;
+    this.element.style.position = 'absolute';
+  }
+
+  collidesWith(obj) {
+    return (this.x < obj.x + obj.width &&
+            this.x + this.width > obj.x &&
+            this.y < obj.y + obj.height &&
+            this.y + this.height > obj.y);
+  }
+}
+
+class Duck {
+  constructor() {
+    this.width = 40; this.height = 40;
+    this.x = Math.random() * (800 - this.width);
+    this.y = Math.random() * (400 - this.height);
+
+    this.element = document.createElement('img');
+    this.element.src = 'assets/duck.png';
+    this.element.classList.add('duck');
+    this.updatePosition();
+  }
+
+  updatePosition() {
+    this.element.style.left = `${this.x}px`;
+    this.element.style.top = `${this.y}px`;
+    this.element.style.position = 'absolute';
+    this.element.style.width = `${this.width}px`;
+    this.element.style.height = `${this.height}px`;
+  }
+
+  startFloating() {
+    setInterval(() => {
+      this.y += Math.sin(Date.now() / 200) * 0.7;
+      this.updatePosition();
+    }, 50);
+  }
+}
 
 class Game {
   constructor() {
-    this.container = document.getElementById("game-container");
-    this.puntosElement = document.getElementById("puntos");
+    this.container = document.getElementById('game-container');
+    this.scoreElement = document.getElementById('puntos');
     this.level = 1;
-    this.puntuacion = 0;
+    this.score = 0;
     this.timeLeft = 30;
-    this.personaje = new Personaje();
-    this.container.appendChild(this.personaje.element);
 
-    this.todosPatitos = [];
-    this.visiblePatitos = [];
+    this.character = new Character();
+    this.container.appendChild(this.character.element);
 
-    if (musicOn) levelSound.play();
-    this.iniciarNivel();
-    this.agregarEventos();
-    this.moverFondo();
+    this.allDucks = [];
+    this.visibleDucks = [];
+    this.ducksEatenThisLevel = 0; 
+    this.spawnRepeats = 0; // track number of duck spawn repetitions
+
+    this.startLevel();
+    this.addEvents();
+    this.addMobileControls();
+    this.moveBackground();
   }
 
-  iniciarNivel() {
-    this.visiblePatitos.forEach(p => this.container.removeChild(p.element));
-    this.todosPatitos = [];
-    this.visiblePatitos = [];
+  startLevel() {
+    this.visibleDucks.forEach(d => this.container.removeChild(d.element));
+    this.allDucks = [];
+    this.visibleDucks = [];
+    this.ducksEatenThisLevel = 0;
+    this.spawnRepeats = 0;
 
-    const totalPatitos = 3 + this.level * 2; 
-    this.maxVisible = Math.min(3 + this.level - 1, totalPatitos);
+    const totalDucks = 3 + this.level * 2;
+    this.maxVisible = Math.min(5 + this.level - 1, totalDucks);
 
-    for (let i = 0; i < totalPatitos; i++) {
-      const p = new Patito();
-      p.startFloating(); 
-      this.todosPatitos.push(p);
+    for (let i = 0; i < totalDucks; i++) {
+      const d = new Duck();
+      d.startFloating();
+      this.allDucks.push(d);
     }
 
-    this.visiblePatitos = this.todosPatitos.splice(0, this.maxVisible);
-    this.visiblePatitos.forEach(patito => this.container.appendChild(patito.element));
+    // Show initial ducks
+    this.visibleDucks = this.allDucks.splice(0, this.maxVisible);
+    this.visibleDucks.forEach(d => this.container.appendChild(d.element));
 
     this.timeLeft = 30;
-    this.mostrarTemporizador();
+    this.showTimer();
   }
 
-  mostrarTemporizador() {
+  showTimer() {
     clearInterval(this.timer);
     this.timer = setInterval(() => {
       this.timeLeft--;
-      this.puntosElement.textContent = `Level: ${this.level} | Points: ${this.puntuacion} | Time: ${this.timeLeft}`;
+      this.scoreElement.textContent = `Level: ${this.level} | Points: ${this.score} | Time: ${this.timeLeft}`;
+      if (this.timeLeft <= 10) this.scoreElement.classList.add('warning');
+      else this.scoreElement.classList.remove('warning');
 
-      if (this.timeLeft <= 10) this.puntosElement.classList.add('warning');
-      else this.puntosElement.classList.remove('warning');
-
-      if (this.timeLeft <= 0) {
-        clearInterval(this.timer);
-        this.showGameOver();
-      }
+      if (this.timeLeft <= 0) { clearInterval(this.timer); this.showGameOver(); }
     }, 1000);
+  }
+
+  checkCollisions() {
+    this.visibleDucks.forEach((duck, index) => {
+      if (this.character.collidesWith(duck)) {
+        if (duckOn) { duckSound.currentTime = 0; duckSound.play(); }
+
+        const redDot = document.createElement('div');
+        redDot.classList.add('red-dot');
+        redDot.style.left = `${duck.x + duck.width / 2 - 15}px`;
+        redDot.style.top = `${duck.y + duck.height / 2 - 15}px`;
+        this.container.appendChild(redDot);
+        setTimeout(() => this.container.removeChild(redDot), 200);
+
+        duck.element.classList.add('eaten');
+        setTimeout(() => this.container.removeChild(duck.element), 200);
+
+        this.score += 10;
+        this.visibleDucks.splice(index, 1);
+
+        this.ducksEatenThisLevel++;
+
+        // NEW: generate ducks based on level, max 3 repeats
+        if (this.spawnRepeats < 3 && this.allDucks.length > 0) {
+          const ducksToSpawn = Math.min(this.level, this.allDucks.length);
+          for (let i = 0; i < ducksToSpawn; i++) {
+            const nextDuck = this.allDucks.splice(Math.floor(Math.random() * this.allDucks.length), 1)[0];
+            this.visibleDucks.push(nextDuck);
+            this.container.appendChild(nextDuck.element);
+            nextDuck.startFloating();
+          }
+          this.spawnRepeats++;
+        }
+
+        // Level up only when no ducks remain
+        if (this.visibleDucks.length === 0 && this.allDucks.length === 0) {
+          clearInterval(this.timer);
+          this.level++;
+          this.showNextLevel(() => this.startLevel());
+        }
+      }
+    });
+  }
+
+  addEvents() {
+    window.addEventListener('keydown', e => { this.character.move(e); this.checkCollisions(); });
+  }
+
+  addMobileControls() {
+    const moveInterval = {};
+    const startMoving = (dir) => {
+      if (moveInterval[dir]) return;
+      moveInterval[dir] = setInterval(() => {
+        if (dir === 'up') this.character.y -= this.character.speed;
+        if (dir === 'down') this.character.y += this.character.speed;
+        if (dir === 'left') { this.character.x -= this.character.speed; this.character.element.style.transform = 'scaleX(-1)'; }
+        if (dir === 'right') { this.character.x += this.character.speed; this.character.element.style.transform = 'scaleX(1)'; }
+        this.character.updatePosition();
+        this.checkCollisions();
+      }, 50);
+    };
+
+    const stopMoving = (dir) => {
+      clearInterval(moveInterval[dir]);
+      moveInterval[dir] = null;
+    };
+
+    ['up','down','left','right'].forEach(dir => {
+      const btn = document.getElementById(dir+'-btn');
+      btn.addEventListener('mousedown', () => startMoving(dir));
+      btn.addEventListener('mouseup', () => stopMoving(dir));
+      btn.addEventListener('mouseleave', () => stopMoving(dir));
+      btn.addEventListener('touchstart', (e)=>{e.preventDefault(); startMoving(dir)});
+      btn.addEventListener('touchend', () => stopMoving(dir));
+    });
+  }
+
+  moveBackground() {
+    let offset = 0;
+    setInterval(() => { offset -= 1; this.container.style.backgroundPosition = `${offset}px 0`; }, 50);
   }
 
   showGameOver() {
@@ -161,121 +337,4 @@ class Game {
 
     this.container.appendChild(overlay);
   }
-
-  agregarEventos() {
-    window.addEventListener("keydown", (e) => {
-      this.personaje.mover(e);
-      this.checkColisiones();
-    });
-  }
-
-  checkColisiones() {
-    this.visiblePatitos.forEach((patito, index) => {
-      if (this.personaje.colisionaCon(patito)) {
-        // Sonido del pato siempre
-        duckSound.currentTime = 0;
-        duckSound.play();
-
-        const redDot = document.createElement("div");
-        redDot.classList.add("red-dot");
-        redDot.style.left = `${patito.x + patito.width/2 - 15}px`;
-        redDot.style.top = `${patito.y + patito.height/2 - 15}px`;
-        this.container.appendChild(redDot);
-        setTimeout(() => this.container.removeChild(redDot), 200);
-
-        patito.element.classList.add("eaten");
-        setTimeout(() => this.container.removeChild(patito.element), 200);
-
-        this.puntuacion += 10;
-        this.visiblePatitos.splice(index, 1);
-
-        if (this.todosPatitos.length > 0) {
-          const siguiente = this.todosPatitos.splice(Math.floor(Math.random()*this.todosPatitos.length), 1)[0];
-          this.visiblePatitos.push(siguiente);
-          this.container.appendChild(siguiente.element);
-        }
-
-        if (this.visiblePatitos.length === 0 && this.todosPatitos.length === 0) {
-          clearInterval(this.timer);
-          this.level++;
-          this.showNextLevel(() => this.iniciarNivel());
-        }
-      }
-    });
-  }
-
-  moverFondo() {
-    let offset = 0;
-    setInterval(() => {
-      offset -= 1;
-      this.container.style.backgroundPosition = `${offset}px 0`;
-    }, 50);
-  }
 }
-
-// Personaje
-class Personaje {
-  constructor() {
-    this.x = 50; this.y = 300;
-    this.width = 80; this.height = 80; this.velocidad = 10;
-
-    this.element = document.createElement("img");
-    this.element.src = "assets/shark.gif";
-    this.element.classList.add("shark");
-
-    this.actualizarPosicion();
-  }
-  mover(evento) {
-    if (evento.key === "ArrowRight") { this.x += this.velocidad; this.element.style.transform = "scaleX(1)"; }
-    if (evento.key === "ArrowLeft")  { this.x -= this.velocidad; this.element.style.transform = "scaleX(-1)"; }
-    if (evento.key === "ArrowUp")    this.y -= this.velocidad;
-    if (evento.key === "ArrowDown")  this.y += this.velocidad;
-
-    if (this.x < -this.width) this.x = 800;
-    if (this.x > 800) this.x = -this.width;
-    if (this.y < -this.height) this.y = 400;
-    if (this.y > 400) this.y = -this.height;
-
-    this.actualizarPosicion();
-  }
-  actualizarPosicion() {
-    this.element.style.left = `${this.x}px`;
-    this.element.style.top = `${this.y}px`;
-  }
-  colisionaCon(objeto) {
-    return (this.x < objeto.x + objeto.width &&
-            this.x + this.width > objeto.x &&
-            this.y < objeto.y + objeto.height &&
-            this.y + this.height > objeto.y);
-  }
-}
-
-// Patito con movimiento flotante
-class Patito {
-  constructor() {
-    this.width = 40; this.height = 40;
-    this.x = Math.random() * (800 - this.width);
-    this.y = Math.random() * (400 - this.height);
-
-    this.element = document.createElement("img");
-    this.element.src = "assets/duck.png";
-    this.element.classList.add("duck");
-
-    this.actualizarPosicion();
-  }
-  actualizarPosicion() {
-    this.element.style.left = `${this.x}px`;
-    this.element.style.top = `${this.y}px`;
-    this.element.style.position = "absolute";
-    this.element.style.width = `${this.width}px`;
-    this.element.style.height = `${this.height}px`;
-  }
-  startFloating() {
-    setInterval(() => {
-      this.y += Math.sin(Date.now()/200) * 0.7;
-      this.actualizarPosicion();
-    }, 50);
-  }
-}
-
-const juego = new Game();
