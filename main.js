@@ -71,10 +71,14 @@ class Character {
     if (event.key === 'ArrowUp') this.y -= this.speed;
     if (event.key === 'ArrowDown') this.y += this.speed;
 
-    if (this.x < -this.width) this.x = 800;
-    if (this.x > 800) this.x = -this.width;
-    if (this.y < -this.height) this.y = 400;
-    if (this.y > 400) this.y = -this.height;
+    // 🔥 adapt to container size
+    const containerWidth = this.element.parentElement.clientWidth;
+    const containerHeight = this.element.parentElement.clientHeight;
+
+    if (this.x < -this.width) this.x = containerWidth;
+    if (this.x > containerWidth) this.x = -this.width;
+    if (this.y < -this.height) this.y = containerHeight;
+    if (this.y > containerHeight) this.y = -this.height;
 
     this.updatePosition();
   }
@@ -96,8 +100,14 @@ class Character {
 class Duck {
   constructor() {
     this.width = 40; this.height = 40;
-    this.x = Math.random() * (800 - this.width);
-    this.y = Math.random() * (400 - this.height);
+
+    // 🔥 adapt spawn to container size
+    const container = document.getElementById('game-container');
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    this.x = Math.random() * (containerWidth - this.width);
+    this.y = Math.random() * (containerHeight - this.height);
 
     this.element = document.createElement('img');
     this.element.src = 'assets/duck.png';
@@ -127,7 +137,7 @@ class Game {
     this.scoreElement = document.getElementById('puntos');
     this.level = 1;
     this.score = 0;
-    this.timeLeft = 30;
+    this.timeLeft = 26;
 
     this.character = new Character();
     this.container.appendChild(this.character.element);
@@ -135,7 +145,7 @@ class Game {
     this.allDucks = [];
     this.visibleDucks = [];
     this.ducksEatenThisLevel = 0; 
-    this.spawnRepeats = 0; // track number of duck spawn repetitions
+    this.spawnRepeats = 0;
 
     this.startLevel();
     this.addEvents();
@@ -159,11 +169,10 @@ class Game {
       this.allDucks.push(d);
     }
 
-    // Show initial ducks
     this.visibleDucks = this.allDucks.splice(0, this.maxVisible);
     this.visibleDucks.forEach(d => this.container.appendChild(d.element));
 
-    this.timeLeft = 30;
+    this.timeLeft = 26;
     this.showTimer();
   }
 
@@ -199,7 +208,6 @@ class Game {
 
         this.ducksEatenThisLevel++;
 
-        // NEW: generate ducks based on level, max 3 repeats
         if (this.spawnRepeats < 3 && this.allDucks.length > 0) {
           const ducksToSpawn = Math.min(this.level, this.allDucks.length);
           for (let i = 0; i < ducksToSpawn; i++) {
@@ -211,7 +219,6 @@ class Game {
           this.spawnRepeats++;
         }
 
-        // Level up only when no ducks remain
         if (this.visibleDucks.length === 0 && this.allDucks.length === 0) {
           clearInterval(this.timer);
           this.level++;
