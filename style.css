@@ -9,6 +9,7 @@ body {
   height: 100vh;
   flex-direction: column;
 }
+
 #game-container {
   position: relative;
   width: 800px;
@@ -20,24 +21,23 @@ body {
   border-radius: 30px;
 }
 
-.personaje {
+/* Tiburón gif */
+.shark {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  background-color: #07a07c;
-  border-radius: 50%;
-  border: 5px solid #07a050;
+  width: 80px;
+  height: auto;
 }
 
-.moneda {
+/* Puntos rojos (de prueba) */
+.dot {
   position: absolute;
-  width: 30px;
-  height: 30px;
-  background-color: gold;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  box-shadow: 0 0 10px 2px rgba(255, 223, 0, 0.8);
+  background: red;
 }
 
+/* Marcador */
 #puntos {
   font-size: 20px;
   text-align: center;
