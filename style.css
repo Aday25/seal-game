@@ -1,52 +1,87 @@
+/* Fondo de la página */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   overflow: hidden;
-  background-color: #b8b8b8;
+  background-image: url('assets/background-image.png');
+  /* fondo general */
+  background-size: cover;
+  background-position: center;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   height: 100vh;
-  flex-direction: column;
 }
 
+/* Imagen de título encima del juego */
+#game-title {
+  width: 260px;
+  /* ajusta según necesites */
+  margin-top: 20px;
+}
+
+/* Contenedor del juego */
 #game-container {
   position: relative;
   width: 800px;
   height: 400px;
   margin: 20px auto;
   border: 10px solid #6d6d6d;
-  background: #fff;
   overflow: hidden;
   border-radius: 30px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 
-    /* Fondo oceánico */
-  background-image: url('assets/ocean.png'); /* tu imagen de agua */
+  /* Fondo oceánico animado */
+  background-image: url('assets/ocean.png');
   background-repeat: repeat-x;
   background-position: 0 0;
   background-size: cover;
 }
 
-
-/* Tiburón gif */
+/* Tiburón */
 .shark {
   position: absolute;
   width: 160px;
   height: auto;
 }
 
-/* Patitos que cambian a rojo */
+/* Patitos flotando */
 .duck {
   position: absolute;
   width: 40px;
   height: 40px;
   transition: filter 0.2s, transform 0.2s, opacity 0.2s;
+  animation: floatDuck 2s ease-in-out infinite alternate;
 }
 
+@keyframes floatDuck {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Patito comido: rojo y desapareciendo */
 .duck.eaten {
-  filter: hue-rotate(0deg) saturate(10) brightness(1); /* lo hace rojo intenso */
+  filter: hue-rotate(0deg) saturate(10) brightness(1);
   transform: scale(0.5);
   opacity: 0.7;
+}
+
+/* Dot rojo al comer */
+.red-dot {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: red;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Marcador */
