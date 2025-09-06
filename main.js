@@ -9,10 +9,12 @@ const aboutButton = document.getElementById('about-me-button');
 const duckButton = document.getElementById('duck-button');
 const playButton = document.getElementById('play-btn');
 
-// Hide buttons at start
-musicButton.style.display = "none";
-aboutButton.style.display = "none";
-duckButton.style.display = "none";
+// ===== Mobile buttons =====
+const mobileButtons = ['up-btn', 'down-btn', 'left-btn', 'right-btn'];
+
+// Hide all buttons at start
+[musicButton, aboutButton, duckButton].forEach(b => b.style.display = 'none');
+mobileButtons.forEach(id => document.getElementById(id).style.display = 'none');
 
 // ===== States =====
 let musicOn = true;
@@ -32,11 +34,8 @@ musicButton.addEventListener('click', () => {
 
 // ===== Duck Mode Button =====
 duckButton.addEventListener('click', () => {
-  if (duckOn) {
-    duckButton.src = 'assets/duck-off.png';
-  } else {
-    duckButton.src = 'assets/duck-on.png';
-  }
+  if (duckOn) duckButton.src = 'assets/duck-off.png';
+  else duckButton.src = 'assets/duck-on.png';
   duckOn = !duckOn;
 });
 
@@ -46,9 +45,13 @@ playButton.addEventListener('click', () => {
   document.getElementById('cover-screen').style.display = 'none';
   gameInstance = new Game();
 
+  // Show main buttons
   musicButton.style.display = "block";
   aboutButton.style.display = "flex";
   duckButton.style.display = "block";
+
+  // Show mobile controls
+  mobileButtons.forEach(id => document.getElementById(id).style.display = 'block');
 
   if (musicOn) levelSound.play();
 });
@@ -137,7 +140,7 @@ class Game {
     this.scoreElement = document.getElementById('puntos');
     this.level = 1;
     this.score = 0;
-    this.timeLeft = 26;
+    this.timeLeft = 21;
 
     this.character = new Character();
     this.container.appendChild(this.character.element);
@@ -172,7 +175,7 @@ class Game {
     this.visibleDucks = this.allDucks.splice(0, this.maxVisible);
     this.visibleDucks.forEach(d => this.container.appendChild(d.element));
 
-    this.timeLeft = 26;
+    this.timeLeft = 21;
     this.showTimer();
   }
 

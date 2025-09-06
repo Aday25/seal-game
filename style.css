@@ -320,18 +320,18 @@ body {
 @media (max-width: 600px) {
   /* Contenedor del juego */
   #game-container {
-    height: 55vh;        /* tamaño base relativo a la pantalla */
+    height: 65vh;        /* tamaño base relativo a la pantalla */
     min-height: 250px;   /* nunca más pequeño que esto */
     max-height: 1000px;   /* nunca más grande que esto */
     width: 95%;          /* ajusta al ancho de pantalla */
     margin: 0 auto;      /* lo centra */
-    margin-top: 60px;
+    margin-top: 40px;
   }
 
   /* Título */
   #game-title {
-    width: 180px;
-    margin-top: 10px;
+    width: 130px;
+    margin-top: 30px;
   }
 
   /* Botón About Me */
@@ -340,8 +340,8 @@ body {
     left: 16px;
   }
   #about-me-button img {
-    width: 93px;
-    height: 93px;
+    width: 73px;
+    height: 73px;
   }
 
   #about-me-button p {
@@ -351,17 +351,17 @@ body {
   /* Botón música */
   #music-button {
     top: 10px;
-    right: 7px;
-    width: 70px;
-    height: 70px;
+    right: 3px;
+    width: 64px;
+    height: 64px;
   }
 
   /* Botón pato */
   #duck-button {
     top: 10px;
-    right: 70px;
-    width: 50px;
-    height: 50px;
+    right: 63px;
+    width: 47px;
+    height: 47px;
   }
 
   /* Marcador */
@@ -373,7 +373,7 @@ body {
 
   /* Tiburón */
   .shark {
-    width: 160px;
+    width: 120px;
   }
 
   /* Patos */
