@@ -2,6 +2,7 @@
 :root {
   --about-font: 'Arial, sans-serif';
 }
+
 * {
   box-sizing: border-box;
 }
@@ -93,8 +94,13 @@ body {
 
 /* ===== Animación del agua ===== */
 @keyframes moveWater {
-  from { background-position-x: 0; }
-  to { background-position-x: 800px; }
+  from {
+    background-position-x: 0;
+  }
+
+  to {
+    background-position-x: 800px;
+  }
 }
 
 /* ===== Tiburón ===== */
@@ -114,8 +120,13 @@ body {
 }
 
 @keyframes floatDuck {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-10px); }
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-10px);
+  }
 }
 
 /* Patito comido */
@@ -242,7 +253,7 @@ body {
 }
 
 /* Párrafo del About Me: usa la variable --about-font para cambiar la fuente fácilmente */
-.about-card p {
+.about-button p {
   margin: 10px 0;
   font-size: 16px;
   line-height: 1.5;
@@ -301,31 +312,53 @@ body {
 @media (max-width: 900px) {
   #game-container {
     height: 65vh;
+    margin-top: 60px;
   }
+
   #game-title {
     width: 180px;
   }
+
   #puntos {
     font-size: 16px;
   }
+
   .shark {
     width: 120px;
   }
+
   .duck {
     width: 30px;
     height: 30px;
   }
+
+  /* Controles móviles */
+  #mobile-controls {
+    display: flex;
+  }
+
+  #mobile-controls button {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
 }
 
 @media (max-width: 600px) {
+
   /* Contenedor del juego */
   #game-container {
-    height: 65vh;        /* tamaño base relativo a la pantalla */
-    min-height: 250px;   /* nunca más pequeño que esto */
-    max-height: 1000px;   /* nunca más grande que esto */
-    width: 95%;          /* ajusta al ancho de pantalla */
-    margin: 0 auto;      /* lo centra */
-    margin-top: 40px;
+    height: 65vh;
+    /* tamaño base relativo a la pantalla */
+    min-height: 250px;
+    /* nunca más pequeño que esto */
+    max-height: 1000px;
+    /* nunca más grande que esto */
+    width: 95%;
+    /* ajusta al ancho de pantalla */
+    margin: 0 auto;
+    /* lo centra */
+    margin-top: 30px;
   }
 
   /* Título */
@@ -339,14 +372,11 @@ body {
     top: 4px;
     left: 16px;
   }
+
   #about-me-button img {
     width: 73px;
     height: 73px;
   }
-
-  #about-me-button p {
-  display: none;
-}
 
   /* Botón música */
   #music-button {
@@ -386,6 +416,7 @@ body {
   #mobile-controls {
     display: flex;
   }
+
   #mobile-controls button {
     width: 40px;
     height: 40px;
@@ -397,9 +428,9 @@ body {
     width: 90%;
     max-width: 300px;
   }
+
   #cover-screen button {
     font-size: 20px;
     padding: 12px 25px;
   }
 }
-
