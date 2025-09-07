@@ -56,8 +56,8 @@ playButton.addEventListener('click', () => {
   if (musicOn) levelSound.play();
 });
 
+// ===== Emoji cursor =====
 document.addEventListener("mousemove", (e) => {
-  // Mueve el emoji
   const emojiCursor = document.getElementById("emoji-cursor");
   if (emojiCursor) {
     emojiCursor.style.left = `${e.clientX}px`;
@@ -65,11 +65,14 @@ document.addEventListener("mousemove", (e) => {
   }
 });
 
-// ===== Classes =====
+// ===== Character class =====
 class Character {
   constructor() {
-    this.x = 50; this.y = 300;
-    this.width = 80; this.height = 80; this.speed = 10;
+    this.x = 50; 
+    this.y = 300;
+    this.width = 80; 
+    this.height = 80; 
+    this.speed = 10;
 
     this.element = document.createElement('img');
     this.element.src = 'assets/shark.gif';
@@ -83,13 +86,14 @@ class Character {
     if (event.key === 'ArrowUp') this.y -= this.speed;
     if (event.key === 'ArrowDown') this.y += this.speed;
 
-    // 🔥 adapt to container size
+    // Container dimensions
     const containerWidth = this.element.parentElement.clientWidth;
     const containerHeight = this.element.parentElement.clientHeight;
 
-    if (this.x < -this.width) this.x = containerWidth;
+    // Reaparece por el lado contrario si sale
+    if (this.x + this.width < 0) this.x = containerWidth;
     if (this.x > containerWidth) this.x = -this.width;
-    if (this.y < -this.height) this.y = containerHeight;
+    if (this.y + this.height < 0) this.y = containerHeight;
     if (this.y > containerHeight) this.y = -this.height;
 
     this.updatePosition();
@@ -109,11 +113,10 @@ class Character {
   }
 }
 
+// ===== Duck class =====
 class Duck {
   constructor() {
     this.width = 40; this.height = 40;
-
-    // 🔥 adapt spawn to container size
     const container = document.getElementById('game-container');
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
@@ -143,6 +146,7 @@ class Duck {
   }
 }
 
+// ===== Game class =====
 class Game {
   constructor() {
     this.container = document.getElementById('game-container');
