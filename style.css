@@ -160,13 +160,14 @@ body {
 /* ===== Controles móviles ===== */
 #mobile-controls {
   display: none;
-  position: absolute;
-  bottom: -70px;     
+  position: fixed;
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
   gap: 10px;
   z-index: 2100;
 }
+
 #mobile-controls button {
   width: 50px;
   height: 50px;
