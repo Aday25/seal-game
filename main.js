@@ -68,10 +68,10 @@ document.addEventListener("mousemove", (e) => {
 // ===== Character class =====
 class Character {
   constructor() {
-    this.x = 50; 
+    this.x = 50;
     this.y = 300;
-    this.width = 80; 
-    this.height = 80; 
+    this.width = 80;
+    this.height = 80;
     this.speed = 10;
 
     this.element = document.createElement('img');
@@ -107,9 +107,9 @@ class Character {
 
   collidesWith(obj) {
     return (this.x < obj.x + obj.width &&
-            this.x + this.width > obj.x &&
-            this.y < obj.y + obj.height &&
-            this.y + this.height > obj.y);
+      this.x + this.width > obj.x &&
+      this.y < obj.y + obj.height &&
+      this.y + this.height > obj.y);
   }
 }
 
@@ -160,7 +160,7 @@ class Game {
 
     this.allDucks = [];
     this.visibleDucks = [];
-    this.ducksEatenThisLevel = 0; 
+    this.ducksEatenThisLevel = 0;
     this.spawnRepeats = 0;
 
     this.startLevel();
@@ -267,12 +267,12 @@ class Game {
       moveInterval[dir] = null;
     };
 
-    ['up','down','left','right'].forEach(dir => {
-      const btn = document.getElementById(dir+'-btn');
+    ['up', 'down', 'left', 'right'].forEach(dir => {
+      const btn = document.getElementById(dir + '-btn');
       btn.addEventListener('mousedown', () => startMoving(dir));
       btn.addEventListener('mouseup', () => stopMoving(dir));
       btn.addEventListener('mouseleave', () => stopMoving(dir));
-      btn.addEventListener('touchstart', (e)=>{e.preventDefault(); startMoving(dir)});
+      btn.addEventListener('touchstart', (e) => { e.preventDefault(); startMoving(dir) });
       btn.addEventListener('touchend', () => stopMoving(dir));
     });
   }

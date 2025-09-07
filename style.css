@@ -325,6 +325,7 @@ body {
     opacity: 1;
     transform: scale(1) translate(-50%, -50%);
   }
+
   100% {
     opacity: 0;
     transform: scale(2.2) translate(-50%, -50%);
@@ -368,9 +369,10 @@ body {
 }
 
 @media (max-width: 600px) {
-   #emoji-cursor {
+  #emoji-cursor {
     display: none;
   }
+
   /* Contenedor del juego */
   #game-container {
     height: 65vh;
