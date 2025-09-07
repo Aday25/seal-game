@@ -20,6 +20,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  cursor: none;
 }
 
 /* ===== Pantalla de presentación ===== */
@@ -308,6 +310,27 @@ body {
   background-color: #005fa3;
 }
 
+/* === CURSOR === */
+#emoji-cursor {
+  position: fixed;
+  font-size: 32px;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s linear;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.2) translate(-50%, -50%);
+  }
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   #game-container {
@@ -345,7 +368,9 @@ body {
 }
 
 @media (max-width: 600px) {
-
+   #emoji-cursor {
+    display: none;
+  }
   /* Contenedor del juego */
   #game-container {
     height: 65vh;
