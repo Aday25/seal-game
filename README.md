@@ -18,7 +18,7 @@ En él controlarás a **Chompy**, un tiburón glotón que debe comerse todos los
 ## 🎮 Gameplay
 
 <p align="center">
-  <img src="assets/screencaps.png" alt="Chompy Game Screenshot" width="700" style="border-radius:20px;">
+  <img src="assets/screencaps.png" alt="Chompy Game Screenshot" width="700">
 </p>
 
 ### 🎯 Controles ◀️​▶️​🔼​🔽​
