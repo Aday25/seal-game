@@ -56,6 +56,14 @@ playButton.addEventListener('click', () => {
   if (musicOn) levelSound.play();
 });
 
+// === Permitir Play con Enter ===
+document.addEventListener("keydown", (event) => {
+  const cover = document.getElementById("cover-screen");
+  if (event.key === "Enter" && cover && cover.style.display !== "none") {
+    playButton.click();
+  }
+});
+
 // ===== Emoji cursor =====
 document.addEventListener("mousemove", (e) => {
   const emojiCursor = document.getElementById("emoji-cursor");
@@ -86,11 +94,9 @@ class Character {
     if (event.key === 'ArrowUp') this.y -= this.speed;
     if (event.key === 'ArrowDown') this.y += this.speed;
 
-    // Container dimensions
     const containerWidth = this.element.parentElement.clientWidth;
     const containerHeight = this.element.parentElement.clientHeight;
 
-    // Reaparece por el lado contrario si sale
     if (this.x + this.width < 0) this.x = containerWidth;
     if (this.x > containerWidth) this.x = -this.width;
     if (this.y + this.height < 0) this.y = containerHeight;
@@ -318,6 +324,15 @@ class Game {
     overlay.appendChild(btn);
 
     this.container.appendChild(overlay);
+
+    // === Permitir Restart con Enter ===
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        location.reload();
+        document.removeEventListener("keydown", handleKeyDown);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
   }
 
   showNextLevel(callback) {
@@ -359,5 +374,15 @@ class Game {
     overlay.appendChild(btn);
 
     this.container.appendChild(overlay);
+
+    // === Permitir Continue con Enter ===
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        this.container.removeChild(overlay);
+        document.removeEventListener("keydown", handleKeyDown);
+        if (callback) callback();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
   }
 }
