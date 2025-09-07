@@ -73,9 +73,8 @@ He adaptado y modificado la dinámica, los controles y el diseño general para c
 ## 🚀 Sobre este proyecto
 Este juego forma parte de una práctica dentro del **Bootcamp de [Factoría F5](https://factoriaf5.org/)**.  
 
-### 🌐 Mis contactos
+### 🌐 Contácta conmigo
 - [LinkedIn](https://www.linkedin.com/in/adayasc/)  
-- [GitHub](https://github.com/Aday25)  
 - [Email](mailto:aday.it25@gmail.com)  
 
 ---
