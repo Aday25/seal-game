@@ -3,7 +3,7 @@
 </p>
 
 ¡Bienvenid@ a **Chompy - The Game**!  
-Un minijuego creado como homenaje a una de mis películas favoritas en su 50º aniversario junto con los  🎬✨.  
+Un minijuego creado como homenaje a una de mis películas favoritas en su 50º aniversario 🎬✨.  
 Chompy, el tiburón, también acompaña todos mis proyectos como mi **cibermascota y logo personal** 👩🏻‍💻​❤️🦈.  
 
 ---
