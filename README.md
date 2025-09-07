@@ -21,7 +21,7 @@ En él controlarás a **Chompy**, un tiburón glotón que debe comerse todos los
   <img src="assets/screencaps.png" alt="Chompy Game Screenshot" width="700">
 </p>
 
-### 🎯 Controles ◀️​▶️​🔼​🔽​
+### 🤳 Controles ◀️​▶️​🔼​🔽​
 - ⌨️ **PC**: Usa las flechas del teclado para mover a Chompy.  
 - 📱 **Móvil**: Controles táctiles adaptados para una mejor experiencia.  
 
