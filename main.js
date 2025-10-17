@@ -1,6 +1,6 @@
 // ===== Sounds =====
 const duckSound = new Audio('assets/duck-sound.mpeg');
-const levelSound = new Audio('assets/jaws-theme.mp3');
+const levelSound = new Audio('assets/underwater.mp3');
 levelSound.loop = true;
 
 // ===== Buttons =====
@@ -83,7 +83,7 @@ class Character {
     this.speed = 10;
 
     this.element = document.createElement('img');
-    this.element.src = 'assets/shark.gif';
+    this.element.src = 'assets/seal.gif';
     this.element.classList.add('shark');
     this.updatePosition();
   }
@@ -131,7 +131,7 @@ class Duck {
     this.y = Math.random() * (containerHeight - this.height);
 
     this.element = document.createElement('img');
-    this.element.src = 'assets/duck.png';
+    this.element.src = 'assets/cod.png';
     this.element.classList.add('duck');
     this.updatePosition();
   }
