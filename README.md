@@ -70,8 +70,8 @@ Hemos adaptado y modificado la dinámica, los personajes y el diseño general pa
 
 ---
 
-## 🚀 Sobre este proyecto
-Este juego forma parte de una práctica dentro del **Bootcamp de [Factoría F5](https://factoriaf5.org/)** y se integra como extra en nuestro proyecto Fullstack **El Gran Azul**, desarrollado en equipo.  
+## 👾 Sobre este proyecto
+Este juego forma parte de una práctica dentro del **Bootcamp de [Factoría F5](https://factoriaf5.org/)** y se quiere integrar como extra en nuestro proyecto Fullstack **El Gran Azul**, desarrollado en equipo.  
 
 Puedes explorar ambos repositorios:  
 - [Chompy-The Game](https://github.com/Aday25/chompy-the-game) → El juego original que inspiró a Yuki  
