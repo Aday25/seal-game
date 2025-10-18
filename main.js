@@ -1,75 +1,92 @@
 // ===== Sounds =====
-const duckSound = new Audio('assets/duck-sound.mpeg');
+const codSound = new Audio('assets/bubble-pop.mp3');
 const levelSound = new Audio('assets/underwater.mp3');
 levelSound.loop = true;
 
-// ===== Buttons =====
-const musicButton = document.getElementById('music-button');
-const aboutButton = document.getElementById('about-me-button');
-const duckButton = document.getElementById('duck-button');
-const playButton = document.getElementById('play-btn');
+// ===== States =====
+let musicOn = true;
+let codOn = true;
+let gameInstance = null;
 
 // ===== Mobile buttons =====
 const mobileButtons = ['up-btn', 'down-btn', 'left-btn', 'right-btn'];
 
-// Hide all buttons at start
-[musicButton, aboutButton, duckButton].forEach(b => b.style.display = 'none');
-mobileButtons.forEach(id => document.getElementById(id).style.display = 'none');
+// ===== Main setup after DOM loaded =====
+document.addEventListener('DOMContentLoaded', () => {
+  // ===== Buttons =====
+  const musicButton = document.getElementById('music-button');
+  const aboutButton = document.getElementById('about-me-button');
+  const codButton = document.getElementById('cod-button');
+  const playButton = document.getElementById('play-btn');
 
-// ===== States =====
-let musicOn = true;
-let duckOn = true;
+  // Hide all buttons at start
+  [musicButton, aboutButton, codButton].forEach(b => { if (b) b.style.display = 'none'; });
+  mobileButtons.forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.style.display = 'none';
+  });
 
-// ===== Music Button =====
-musicButton.addEventListener('click', () => {
-  if (musicOn) {
-    levelSound.pause();
-    musicButton.src = 'assets/audio-off.png';
-  } else {
-    levelSound.play();
-    musicButton.src = 'assets/audio-on.png';
+  // ===== Music Button =====
+  if (musicButton) {
+    musicButton.addEventListener('click', () => {
+      if (musicOn) {
+        levelSound.pause();
+        musicButton.src = 'assets/audio-off.png';
+      } else {
+        levelSound.play();
+        musicButton.src = 'assets/audio-on.png';
+      }
+      musicOn = !musicOn;
+    });
   }
-  musicOn = !musicOn;
-});
 
-// ===== Duck Mode Button =====
-duckButton.addEventListener('click', () => {
-  if (duckOn) duckButton.src = 'assets/duck-off.png';
-  else duckButton.src = 'assets/duck-on.png';
-  duckOn = !duckOn;
-});
-
-// ===== Play Button =====
-let gameInstance = null;
-playButton.addEventListener('click', () => {
-  document.getElementById('cover-screen').style.display = 'none';
-  gameInstance = new Game();
-
-  // Show main buttons
-  musicButton.style.display = "block";
-  aboutButton.style.display = "flex";
-  duckButton.style.display = "block";
-
-  // Show mobile controls
-  mobileButtons.forEach(id => document.getElementById(id).style.display = 'block');
-
-  if (musicOn) levelSound.play();
-});
-
-// === Permitir Play con Enter ===
-document.addEventListener("keydown", (event) => {
-  const cover = document.getElementById("cover-screen");
-  if (event.key === "Enter" && cover && cover.style.display !== "none") {
-    playButton.click();
+  // ===== Cod Mode Button =====
+  if (codButton) {
+    codButton.addEventListener('click', () => {
+      if (codOn) codButton.src = 'assets/bubble-off.png';
+      else codButton.src = 'assets/bubble-on.png';
+      codOn = !codOn;
+    });
   }
-});
 
-// ===== Emoji cursor =====
-document.addEventListener("mousemove", (e) => {
+  // ===== Play Button =====
+  if (playButton) {
+    playButton.addEventListener('click', () => {
+      const cover = document.getElementById('cover-screen');
+      if (cover) cover.style.display = 'none';
+
+      gameInstance = new Game();
+
+      // Show main buttons
+      if (musicButton) musicButton.style.display = "block";
+      if (aboutButton) aboutButton.style.display = "flex";
+      if (codButton) codButton.style.display = "block";
+
+      // Show mobile controls
+      mobileButtons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.display = 'block';
+      });
+
+      if (musicOn) levelSound.play();
+    });
+  }
+
+  // ===== Play with Enter =====
+  document.addEventListener("keydown", (event) => {
+    const cover = document.getElementById("cover-screen");
+    if (event.key === "Enter" && cover && cover.style.display !== "none") {
+      if (playButton) playButton.click();
+    }
+  });
+
+  // ===== Emoji cursor =====
   const emojiCursor = document.getElementById("emoji-cursor");
   if (emojiCursor) {
-    emojiCursor.style.left = `${e.clientX}px`;
-    emojiCursor.style.top = `${e.clientY}px`;
+    document.addEventListener("mousemove", (e) => {
+      emojiCursor.style.left = `${e.clientX}px`;
+      emojiCursor.style.top = `${e.clientY}px`;
+    });
   }
 });
 
@@ -84,7 +101,7 @@ class Character {
 
     this.element = document.createElement('img');
     this.element.src = 'assets/seal.gif';
-    this.element.classList.add('shark');
+    this.element.classList.add('seal');
     this.updatePosition();
   }
 
@@ -119,20 +136,20 @@ class Character {
   }
 }
 
-// ===== Duck class =====
-class Duck {
+// ===== Cod class =====
+class Cod {
   constructor() {
     this.width = 40; this.height = 40;
     const container = document.getElementById('game-container');
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+    const containerWidth = container ? container.clientWidth : 800;
+    const containerHeight = container ? container.clientHeight : 600;
 
     this.x = Math.random() * (containerWidth - this.width);
     this.y = Math.random() * (containerHeight - this.height);
 
     this.element = document.createElement('img');
     this.element.src = 'assets/cod.png';
-    this.element.classList.add('duck');
+    this.element.classList.add('Cod');
     this.updatePosition();
   }
 
@@ -162,11 +179,11 @@ class Game {
     this.timeLeft = 21;
 
     this.character = new Character();
-    this.container.appendChild(this.character.element);
+    if (this.container) this.container.appendChild(this.character.element);
 
-    this.allDucks = [];
-    this.visibleDucks = [];
-    this.ducksEatenThisLevel = 0;
+    this.allCods = [];
+    this.visibleCods = [];
+    this.codsEatenThisLevel = 0;
     this.spawnRepeats = 0;
 
     this.startLevel();
@@ -176,23 +193,23 @@ class Game {
   }
 
   startLevel() {
-    this.visibleDucks.forEach(d => this.container.removeChild(d.element));
-    this.allDucks = [];
-    this.visibleDucks = [];
-    this.ducksEatenThisLevel = 0;
+    this.visibleCods.forEach(d => { if (this.container && d.element.parentElement) this.container.removeChild(d.element); });
+    this.allCods = [];
+    this.visibleCods = [];
+    this.codsEatenThisLevel = 0;
     this.spawnRepeats = 0;
 
-    const totalDucks = 3 + this.level * 2;
-    this.maxVisible = Math.min(5 + this.level - 1, totalDucks);
+    const totalCods = 3 + this.level * 2;
+    this.maxVisible = Math.min(5 + this.level - 1, totalCods);
 
-    for (let i = 0; i < totalDucks; i++) {
-      const d = new Duck();
+    for (let i = 0; i < totalCods; i++) {
+      const d = new Cod();
       d.startFloating();
-      this.allDucks.push(d);
+      this.allCods.push(d);
     }
 
-    this.visibleDucks = this.allDucks.splice(0, this.maxVisible);
-    this.visibleDucks.forEach(d => this.container.appendChild(d.element));
+    this.visibleCods = this.allCods.splice(0, this.maxVisible);
+    this.visibleCods.forEach(d => { if (this.container) this.container.appendChild(d.element); });
 
     this.timeLeft = 21;
     this.showTimer();
@@ -201,47 +218,49 @@ class Game {
   showTimer() {
     clearInterval(this.timer);
     this.timer = setInterval(() => {
-      this.timeLeft--;
-      this.scoreElement.textContent = `Level: ${this.level} | Points: ${this.score} | Time: ${this.timeLeft}`;
-      if (this.timeLeft <= 10) this.scoreElement.classList.add('warning');
-      else this.scoreElement.classList.remove('warning');
+      if (this.scoreElement) {
+        this.timeLeft--;
+        this.scoreElement.textContent = `Level: ${this.level} | Points: ${this.score} | Time: ${this.timeLeft}`;
+        if (this.timeLeft <= 10) this.scoreElement.classList.add('warning');
+        else this.scoreElement.classList.remove('warning');
 
-      if (this.timeLeft <= 0) { clearInterval(this.timer); this.showGameOver(); }
+        if (this.timeLeft <= 0) { clearInterval(this.timer); this.showGameOver(); }
+      }
     }, 1000);
   }
 
   checkCollisions() {
-    this.visibleDucks.forEach((duck, index) => {
-      if (this.character.collidesWith(duck)) {
-        if (duckOn) { duckSound.currentTime = 0; duckSound.play(); }
+    this.visibleCods.forEach((Cod, index) => {
+      if (this.character.collidesWith(Cod)) {
+        if (codOn) { codSound.currentTime = 0; codSound.play(); }
 
         const redDot = document.createElement('div');
         redDot.classList.add('red-dot');
-        redDot.style.left = `${duck.x + duck.width / 2 - 15}px`;
-        redDot.style.top = `${duck.y + duck.height / 2 - 15}px`;
-        this.container.appendChild(redDot);
-        setTimeout(() => this.container.removeChild(redDot), 200);
+        redDot.style.left = `${Cod.x + Cod.width / 2 - 15}px`;
+        redDot.style.top = `${Cod.y + Cod.height / 2 - 15}px`;
+        if (this.container) this.container.appendChild(redDot);
+        setTimeout(() => { if (this.container) this.container.removeChild(redDot); }, 200);
 
-        duck.element.classList.add('eaten');
-        setTimeout(() => this.container.removeChild(duck.element), 200);
+        Cod.element.classList.add('eaten');
+        setTimeout(() => { if (this.container) this.container.removeChild(Cod.element); }, 200);
 
         this.score += 10;
-        this.visibleDucks.splice(index, 1);
+        this.visibleCods.splice(index, 1);
 
-        this.ducksEatenThisLevel++;
+        this.codsEatenThisLevel++;
 
-        if (this.spawnRepeats < 3 && this.allDucks.length > 0) {
-          const ducksToSpawn = Math.min(this.level, this.allDucks.length);
-          for (let i = 0; i < ducksToSpawn; i++) {
-            const nextDuck = this.allDucks.splice(Math.floor(Math.random() * this.allDucks.length), 1)[0];
-            this.visibleDucks.push(nextDuck);
-            this.container.appendChild(nextDuck.element);
-            nextDuck.startFloating();
+        if (this.spawnRepeats < 3 && this.allCods.length > 0) {
+          const codsToSpawn = Math.min(this.level, this.allCods.length);
+          for (let i = 0; i < codsToSpawn; i++) {
+            const nextCod = this.allCods.splice(Math.floor(Math.random() * this.allCods.length), 1)[0];
+            this.visibleCods.push(nextCod);
+            if (this.container) this.container.appendChild(nextCod.element);
+            nextCod.startFloating();
           }
           this.spawnRepeats++;
         }
 
-        if (this.visibleDucks.length === 0 && this.allDucks.length === 0) {
+        if (this.visibleCods.length === 0 && this.allCods.length === 0) {
           clearInterval(this.timer);
           this.level++;
           this.showNextLevel(() => this.startLevel());
@@ -275,6 +294,7 @@ class Game {
 
     ['up', 'down', 'left', 'right'].forEach(dir => {
       const btn = document.getElementById(dir + '-btn');
+      if (!btn) return;
       btn.addEventListener('mousedown', () => startMoving(dir));
       btn.addEventListener('mouseup', () => stopMoving(dir));
       btn.addEventListener('mouseleave', () => stopMoving(dir));
@@ -285,7 +305,7 @@ class Game {
 
   moveBackground() {
     let offset = 0;
-    setInterval(() => { offset -= 1; this.container.style.backgroundPosition = `${offset}px 0`; }, 50);
+    setInterval(() => { if (this.container) { offset -= 1; this.container.style.backgroundPosition = `${offset}px 0`; } }, 50);
   }
 
   showGameOver() {
@@ -302,7 +322,7 @@ class Game {
     overlay.style.zIndex = '100';
 
     const img = document.createElement('img');
-    img.src = 'assets/game-over.png';
+    img.src = 'assets/crying-seal.gif';
     img.style.width = '100%';
     img.style.height = 'auto';
     overlay.appendChild(img);
@@ -349,7 +369,7 @@ class Game {
     overlay.style.zIndex = '100';
 
     const img = document.createElement('img');
-    img.src = 'assets/next-level.png';
+    img.src = 'assets/dancing-seal.gif';
     img.style.width = '100%';
     img.style.height = 'auto';
     overlay.appendChild(img);

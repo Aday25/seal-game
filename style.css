@@ -105,23 +105,23 @@ body {
   }
 }
 
-/* ===== Tiburón ===== */
-.shark {
+/* ===== Foca ===== */
+.seal {
   position: absolute;
   width: 160px;
   height: auto;
 }
 
-/* ===== Patitos flotando ===== */
-.duck {
+/* ===== Bacalao ===== */
+.cod {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   transition: filter 0.2s, transform 0.2s, opacity 0.2s;
-  animation: floatDuck 2s ease-in-out infinite alternate;
+  animation: floatCod 2s ease-in-out infinite alternate;
 }
 
-@keyframes floatDuck {
+@keyframes floatCod {
   0% {
     transform: translateY(0);
   }
@@ -132,7 +132,7 @@ body {
 }
 
 /* Patito comido */
-.duck.eaten {
+.cod.eaten {
   filter: hue-rotate(0deg) saturate(10) brightness(1);
   transform: scale(0.5);
   opacity: 0.7;
@@ -206,7 +206,7 @@ body {
   color: #1b034b;
 }
 
-/* ===== Music & Duck buttons ===== */
+/* ===== Music & Cod buttons ===== */
 #music-button {
   width: 100px;
   height: 100px;
@@ -222,100 +222,14 @@ body {
   transform: scale(1.1);
 }
 
-#duck-button {
+#cod-button {
   width: 80px;
   height: 80px;
   cursor: pointer;
   position: fixed;
   top: 25px;
   right: 120px;
-  border-radius: 50%;
   z-index: 2000;
-}
-
-/* ==== Page about me ==== */
-.about-card {
-  width: 90%;
-  max-width: 400px;
-  margin: 10px auto;
-  padding: 10px;
-  border-radius: 15px;
-  background-color: rgba(234, 200, 175, 0.95);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  font-family: Arial, sans-serif;
-}
-
-.avatar {
-  width: 150px;
-  height: 220px;
-  border-radius: 50%;
-  margin-bottom: 3px;
-  border: 2px solid #5ca0d7;
-}
-
-/* Párrafo del About Me: usa la variable --about-font para cambiar la fuente fácilmente */
-.about-button p {
-  margin: 10px 0;
-  font-size: 16px;
-  line-height: 1.5;
-  font-family: var(--about-font);
-}
-
-.horizontal-list {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-  padding: 0;
-  margin: 10px 0;
-  gap: 15px;
-}
-
-.horizontal-list li {
-  margin: 0;
-}
-
-.about-card a {
-  color: #0077cc;
-  text-decoration: none;
-}
-
-.about-card a:hover {
-  text-decoration: underline;
-}
-
-.disclaimer {
-  font-size: 12px;
-  color: #555;
-  margin-top: 15px;
-  padding: 10px 15px;
-  border-left: 4px solid #f39c12;
-  background-color: #fff3e0;
-  border-radius: 5px;
-  text-align: left;
-}
-
-.rights {
-  text-align:center; 
-  margin-top:1px; 
-  color:red;
-  font-size: 11px;
-}
-
-
-.back-btn {
-  display: block;
-  text-align: center;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: #cc1717;
-  color: white;
-  border-radius: 10px;
-  text-decoration: none;
-}
-
-.back-btn:hover {
-  background-color: #005fa3;
 }
 
 /* === CURSOR === */
@@ -359,7 +273,7 @@ body {
     width: 120px;
   }
 
-  .duck {
+  .cod {
     width: 30px;
     height: 30px;
   }
@@ -422,7 +336,7 @@ body {
   }
 
   /* Botón pato */
-  #duck-button {
+  #cod-button {
     top: 10px;
     right: 63px;
     width: 47px;
@@ -442,7 +356,7 @@ body {
   }
 
   /* Patos */
-  .duck {
+  .cod {
     width: 25px;
     height: 25px;
   }
