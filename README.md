@@ -61,7 +61,7 @@ El proyecto contiene varias carpetas y archivos principales:
 Este proyecto se inspira en [Chompy-The Game](https://github.com/Aday25/chompy-the-game) y en las enseñanzas de mi profesora [Ana Aragón](https://github.com/anaaragon88/oop-game) 🥰.  
 Hemos adaptado y modificado la dinámica, los personajes y el diseño general para crear **Yuki - The Game**, con un toque educativo y de concienciación ambiental.  
 
-> “Yuki - The Game” es nuestra contribución creativa, desarrollada con cariño, dedicación y mucha ilusión 💻❄️  
+> “Yuki - The Game” es una adaptación de una idea inical a los nuevos proyectos que vamos realizando 💻❄️  
 
 ---
 
