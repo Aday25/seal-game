@@ -15,7 +15,7 @@ const mobileButtons = ['up-btn', 'down-btn', 'left-btn', 'right-btn'];
 document.addEventListener('DOMContentLoaded', () => {
   // ===== Buttons =====
   const musicButton = document.getElementById('music-button');
-  const aboutButton = document.getElementById('about-me-button');
+  const aboutButton = document.getElementById('back-button');
   const codButton = document.getElementById('cod-button');
   const playButton = document.getElementById('play-btn');
 
