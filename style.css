@@ -346,7 +346,7 @@ body {
   /* Marcador */
   #puntos {
     font-size: 14px;
-    color: red;
+    color: rgb(3, 0, 0);
     font: bold;
   }
 
@@ -370,7 +370,7 @@ body {
     width: 50px;
     height: 50px;
     font-size: 20px;
-    background-color: #cc1717;
+    background-color: #112c84;
   }
 
   /* Portada */
