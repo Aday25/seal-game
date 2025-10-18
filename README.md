@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/title-readme.png" alt="Chompy Game Title" width="400">
+  <img src="assets/title-readme.png" alt="Yuki Game Title" width="400">
 </p>
 
-¡Bienvenid@ a **Chompy - The Game**!  
+¡Bienvenid@ a **Yuki - The Game**!  
 Un minijuego creado como homenaje a una de mis películas favoritas en su 50º aniversario 🎬✨.  
 Chompy, el tiburón, también acompaña todos mis proyectos como mi **cibermascota y logo personal** 👩🏻‍💻​❤️🦈.  
 
