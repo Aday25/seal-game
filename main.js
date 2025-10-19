@@ -6,7 +6,16 @@ const levelSound = new Audio('assets/underwater.mp3');
 const screamSound = new Audio('assets/scream.mp3');
 const startSound = new Audio('assets/start.mp3');
 const liveSound = new Audio('assets/live.mp3');
+
 levelSound.loop = true;
+levelSound.volume = 0.5;
+codSound.volume = 0.6;
+screamSound.volume = 0.7;
+startSound.volume = 0.8;
+liveSound.volume = 0.7;
+
+// Preload sounds
+startSound.load();
 
 // =======================
 // ===== STATES =====
@@ -15,6 +24,7 @@ let musicOn = true;
 let codOn = true;
 let gameInstance = null;
 let introPlayed = false;
+let isLandscape = false;
 
 // =======================
 // ===== MOBILE BUTTONS =====
@@ -22,37 +32,57 @@ let introPlayed = false;
 const mobileButtons = ['up-btn', 'down-btn', 'left-btn', 'right-btn'];
 
 // =======================
+// ===== CHECK ORIENTATION =====
+// =======================
+function checkOrientation() {
+  isLandscape = window.innerHeight < window.innerWidth;
+  const rotateNotice = document.getElementById('rotate-notice');
+  
+  if (window.innerWidth <= 900) {
+    if (!isLandscape) {
+      if (rotateNotice) rotateNotice.style.display = 'flex';
+    } else {
+      if (rotateNotice) rotateNotice.style.display = 'none';
+    }
+  }
+}
+
+window.addEventListener('orientationchange', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+
+// =======================
 // ===== MAIN SETUP =====
 // =======================
 document.addEventListener('DOMContentLoaded', () => {
+
+  checkOrientation();
 
   const musicButton = document.getElementById('music-button');
   const aboutButton = document.getElementById('back-button');
   const codButton = document.getElementById('cod-button');
   const playButton = document.getElementById('play-btn');
 
-  // Ocultamos botones iniciales
   [musicButton, aboutButton, codButton].forEach(b => { if (b) b.style.display = 'none'; });
   mobileButtons.forEach(id => {
     const btn = document.getElementById(id);
     if (btn) btn.style.display = 'none';
   });
 
-  // Música ON/OFF
   if (musicButton) {
     musicButton.addEventListener('click', () => {
       if (musicOn) {
         levelSound.pause();
         musicButton.src = 'assets/audio-off.png';
       } else {
-        levelSound.play();
+        if (gameInstance && gameInstance.loopActive) {
+          levelSound.play();
+        }
         musicButton.src = 'assets/audio-on.png';
       }
       musicOn = !musicOn;
     });
   }
 
-  // Burbujas ON/OFF
   if (codButton) {
     codButton.addEventListener('click', () => {
       codButton.src = codOn ? 'assets/bubble-off.png' : 'assets/bubble-on.png';
@@ -60,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Cursor emoji
   const emojiCursor = document.getElementById("emoji-cursor");
   if (emojiCursor) {
     emojiCursor.style.position = 'absolute';
@@ -71,21 +100,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Botón PLAY
   if (playButton) {
     playButton.addEventListener('click', () => {
-      startSound.currentTime = 0;
-      startSound.play();
+      playSound(startSound);
       startGameFlow();
     });
   }
 
-  // ENTER para PLAY
   document.addEventListener("keydown", (event) => {
     const cover = document.getElementById("cover-screen");
     if (event.key === "Enter" && cover && cover.style.display !== 'none') {
-      startSound.currentTime = 0;
-      startSound.play();
+      playSound(startSound);
       startGameFlow();
     }
   });
@@ -108,15 +133,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn) btn.style.display = 'block';
       });
 
-      if (musicOn) levelSound.play();
+      if (musicOn) {
+        levelSound.currentTime = 0;
+        levelSound.play();
+      }
     };
 
     if (!introPlayed) {
+      if (!isLandscape && window.innerWidth <= 900) {
+        const rotateNotice = document.getElementById('rotate-notice');
+        if (rotateNotice) rotateNotice.style.display = 'flex';
+        return;
+      }
+
       const video = document.createElement('video');
       video.src = 'assets/intro.mp4';
       video.style.width = '100%';
       video.style.height = '100%';
-      video.style.objectFit = 'cover';
+      video.style.objectFit = 'contain';
       video.autoplay = true;
       video.controls = false;
       container.appendChild(video);
@@ -146,9 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
       startBtn.style.display = 'none';
       container.appendChild(startBtn);
 
+      let skipKeyHandler = null;
+
       const skipAndStart = () => {
-        startSound.currentTime = 0;
-        startSound.play();
+        playSound(startSound);
+        if (skipKeyHandler) {
+          document.removeEventListener('keydown', skipKeyHandler);
+        }
         video.remove();
         skipBtn.remove();
         startBtn.remove();
@@ -168,16 +206,23 @@ document.addEventListener('DOMContentLoaded', () => {
       skipBtn.addEventListener('click', skipAndStart);
       startBtn.addEventListener('click', skipAndStart);
 
-      document.addEventListener('keydown', (e) => {
+      skipKeyHandler = (e) => {
         if (e.key === 'Enter' && video.parentElement) {
           skipAndStart();
         }
-      }, { once: true });
+      };
+
+      document.addEventListener('keydown', skipKeyHandler);
     } else {
       startGame();
     }
   }
 });
+
+function playSound(audio) {
+  audio.currentTime = 0;
+  audio.play().catch(e => console.log('Sound play error:', e));
+}
 
 // =======================
 // ===== CHARACTER =====
@@ -391,6 +436,7 @@ class EffectParticle {
     this.element.style.border = `3px solid ${color}`;
     this.element.style.pointerEvents = 'none';
     this.element.style.animation = `expandAndFade 0.5s ease-out`;
+    this.element.style.setProperty('--effect-color', color);
 
     container.appendChild(this.element);
   }
@@ -448,7 +494,6 @@ class Game {
     clearInterval(this.heartTimer);
     clearInterval(this.timer);
     if (this.bgInterval) clearInterval(this.bgInterval);
-    this.container.innerHTML = '';
   }
 
   addAnimationStyles() {
@@ -464,10 +509,15 @@ class Game {
           0% {
             transform: scale(0);
             opacity: 1;
+            box-shadow: 0 0 15px currentColor;
+          }
+          50% {
+            box-shadow: 0 0 40px currentColor;
           }
           100% {
-            transform: scale(1.5);
+            transform: scale(3);
             opacity: 0;
+            box-shadow: 0 0 60px currentColor;
           }
         }
         .eaten {
@@ -488,9 +538,6 @@ class Game {
     }
   }
 
-  // =======================
-  // ===== LIVES =====
-  // =======================
   initLivesContainer() {
     this.livesContainer = document.getElementById('lives-container');
     if (!this.livesContainer) {
@@ -515,9 +562,6 @@ class Game {
     }
   }
 
-  // =======================
-  // ===== GAME LOOP =====
-  // =======================
   startGameLoop() {
     if (this.loopRunning) return;
     this.loopRunning = true;
@@ -530,7 +574,6 @@ class Game {
         return;
       }
 
-      // ===== MOVER PLÁSTICOS =====
       this.plastics.forEach(p => {
         p.updatePosition();
         p.checkBounds();
@@ -538,8 +581,7 @@ class Game {
           this.lives--;
           this.updateLives();
           this.createEffect(this.character.x + 40, this.character.y + 40, '#7B2CBF');
-          screamSound.currentTime = 0;
-          screamSound.play();
+          if (musicOn) playSound(screamSound);
           p.hit = true;
           if (this.lives <= 0) {
             this.loopActive = false;
@@ -548,21 +590,18 @@ class Game {
         }
       });
 
-      // ===== GENERAR OBSTÁCULOS =====
       if (Math.random() < 0.01 + 0.002 * this.level) {
         const type = Math.random() < 0.5 ? 'bottle' : 'can';
         this.obstacles.push(new Obstacle(this.container, type));
       }
 
-      // ===== MOVER OBSTÁCULOS =====
       this.obstacles.forEach((o, i) => {
         o.updatePosition();
         if (this.character.collidesWith(o)) {
           this.lives--;
           this.updateLives();
           this.createEffect(this.character.x + 40, this.character.y + 40, '#7B2CBF');
-          screamSound.currentTime = 0;
-          screamSound.play();
+          if (musicOn) playSound(screamSound);
           if (o.element.parentElement) o.element.remove();
           this.obstacles.splice(i, 1);
           if (this.lives <= 0) {
@@ -575,11 +614,11 @@ class Game {
         }
       });
 
-      // ===== MOVER CORAZONES =====
       this.hearts.forEach((h, i) => {
         if (this.character.collidesWith(h)) {
           if (this.lives < 6) this.lives++;
-          this.createEffect(h.x + 20, h.y + 20, '#00FF00');
+          this.createEffect(h.x + 20, h.y + 20, '#FF1493');
+          if (musicOn) playSound(liveSound);
           this.updateLives();
           if (h.element.parentElement) h.element.remove();
           this.hearts.splice(i, 1);
@@ -589,7 +628,6 @@ class Game {
         }
       });
 
-      // ===== LIMPIAR EFECTOS =====
       this.effects.forEach((e, i) => {
         if (e.isExpired()) {
           if (e.element.parentElement) e.element.remove();
@@ -597,7 +635,6 @@ class Game {
         }
       });
 
-      // ===== VERIFICAR PECES =====
       this.checkCollisions();
 
       this._rafId = requestAnimationFrame(loop);
@@ -610,9 +647,6 @@ class Game {
     this.effects.push(new EffectParticle(x, y, this.container, color));
   }
 
-  // =======================
-  // ===== NIVELES =====
-  // =======================
   startLevel() {
     this.visibleCods.forEach(d => {
       if (this.container && d.element.parentElement)
@@ -642,9 +676,6 @@ class Game {
     this.showTimer();
   }
 
-  // =======================
-  // ===== TIMER =====
-  // =======================
   showTimer() {
     clearInterval(this.timer);
     this.timer = setInterval(() => {
@@ -663,15 +694,11 @@ class Game {
     }, 1000);
   }
 
-  // =======================
-  // ===== COLISIONES =====
-  // =======================
   checkCollisions() {
     this.visibleCods.forEach((Cod, index) => {
       if (this.character.collidesWith(Cod)) {
         if (codOn) {
-          codSound.currentTime = 0;
-          codSound.play();
+          playSound(codSound);
         }
 
         this.createEffect(Cod.x + 20, Cod.y + 20, '#00FF00');
@@ -705,9 +732,6 @@ class Game {
     });
   }
 
-  // =======================
-  // ===== CONTROLES =====
-  // =======================
   addEvents() {
     window.addEventListener('keydown', e => {
       this.character.move(e);
@@ -745,9 +769,6 @@ class Game {
     });
   }
 
-  // =======================
-  // ===== FONDO =====
-  // =======================
   moveBackground() {
     let offset = 0;
     this.bgInterval = setInterval(() => {
@@ -758,9 +779,6 @@ class Game {
     }, 50);
   }
 
-  // =======================
-  // ===== GAME OVER =====
-  // =======================
   showGameOver() {
     this.loopActive = false;
     clearInterval(this.heartTimer);
@@ -800,29 +818,41 @@ class Game {
     btn.style.cursor = 'pointer';
 
     const restartGame = () => {
-      startSound.currentTime = 0;
-      startSound.play();
+      playSound(startSound);
+      document.removeEventListener('keydown', restartKeyHandler);
       this.destroy();
       levelSound.pause();
       levelSound.currentTime = 0;
       introPlayed = true;
+      if (musicOn) {
+        levelSound.play();
+      }
       new Game();
+
+      const musicButton = document.getElementById('music-button');
+      const aboutButton = document.getElementById('back-button');
+      const codButton = document.getElementById('cod-button');
+      if (musicButton) musicButton.style.display = 'block';
+      if (aboutButton) aboutButton.style.display = 'flex';
+      if (codButton) codButton.style.display = 'block';
+      mobileButtons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.display = 'block';
+      });
+    };
+
+    const restartKeyHandler = (e) => {
+      if (e.key === 'Enter' && overlay.parentElement) {
+        restartGame();
+      }
     };
 
     btn.addEventListener('click', restartGame);
     overlay.appendChild(btn);
     this.container.appendChild(overlay);
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && overlay.parentElement) {
-        restartGame();
-      }
-    }, { once: true });
+    document.addEventListener('keydown', restartKeyHandler);
   }
 
-  // =======================
-  // ===== NEXT LEVEL =====
-  // =======================
   showNextLevel(callback) {
     this.loopActive = false;
     clearInterval(this.bgInterval);
@@ -860,8 +890,8 @@ class Game {
     btn.style.cursor = 'pointer';
 
     const continueGame = () => {
-      startSound.currentTime = 0;
-      startSound.play();
+      playSound(startSound);
+      document.removeEventListener('keydown', continueKeyHandler);
       if (overlay.parentElement) overlay.remove();
       this.loopActive = true;
       this.moveBackground();
@@ -871,14 +901,15 @@ class Game {
       if (callback) callback();
     };
 
-    btn.addEventListener('click', continueGame);
-    overlay.appendChild(btn);
-    this.container.appendChild(overlay);
-
-    document.addEventListener('keydown', (e) => {
+    const continueKeyHandler = (e) => {
       if (e.key === 'Enter' && overlay.parentElement) {
         continueGame();
       }
-    }, { once: true });
+    };
+
+    btn.addEventListener('click', continueGame);
+    overlay.appendChild(btn);
+    this.container.appendChild(overlay);
+    document.addEventListener('keydown', continueKeyHandler);
   }
 }
