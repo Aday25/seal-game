@@ -20,7 +20,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   cursor: none;
 }
 
@@ -88,73 +87,22 @@ body {
   background-size: cover;
 }
 
-/* Ejemplo de párrafo dentro del contenedor del juego */
-#game-container p {
-  color: #1b034b;
-  font-size: 30px;
-}
-
-/* ===== Animación del agua ===== */
-@keyframes moveWater {
-  from {
-    background-position-x: 0;
-  }
-
-  to {
-    background-position-x: 800px;
-  }
-}
-
-/* ===== Foca ===== */
-.seal {
-  position: absolute;
-  width: 160px;
-  height: auto;
-}
-
-/* ===== Bacalao ===== */
-.cod {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  transition: filter 0.2s, transform 0.2s, opacity 0.2s;
-  animation: floatCod 2s ease-in-out infinite alternate;
-}
-
-@keyframes floatCod {
-  0% {
-    transform: translateY(0);
-  }
-
-  100% {
-    transform: translateY(-10px);
-  }
-}
-
-/* Patito comido */
-.cod.eaten {
-  filter: hue-rotate(0deg) saturate(10) brightness(1);
-  transform: scale(0.5);
-  opacity: 0.7;
-}
-
-/* Dot rojo al comer */
-.red-dot {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgb(70, 185, 234);
-  opacity: 0.6;
-  pointer-events: none;
-  z-index: 0;
-}
-
 /* ===== Marcador ===== */
 #puntos {
   font-size: 20px;
   text-align: center;
   margin: 10px 0;
+}
+
+#puntos.warning {
+  color: red;
+  font-weight: bold;
+  animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.5; }
 }
 
 /* ===== Controles móviles ===== */
@@ -242,19 +190,39 @@ body {
   transition: transform 0.05s linear;
 }
 
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-    transform: scale(1) translate(-50%, -50%);
-  }
+/* ===== Animaciones del juego ===== */
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
 
+@keyframes expandAndFade {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
   100% {
+    transform: scale(1.5);
     opacity: 0;
-    transform: scale(2.2) translate(-50%, -50%);
   }
 }
 
-/* ===== Responsive ===== */
+.eaten {
+  animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+/* ===== Responsive Desktop ===== */
 @media (max-width: 900px) {
   #game-container {
     height: 65vh;
@@ -278,45 +246,42 @@ body {
     height: 30px;
   }
 
-  /* Controles móviles */
   #mobile-controls {
     display: flex;
   }
 
   #mobile-controls button {
-    width: 300px;
-    height: 30px;
-    font-size: 10px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    background-color: #3654b8;
+    color: #fff;
   }
 }
 
+/* ===== Responsive Mobile ===== */
 @media (max-width: 600px) {
   #emoji-cursor {
     display: none;
   }
 
-  /* Contenedor del juego */
-  #game-container {
-    height: 65vh;
-    /* tamaño base relativo a la pantalla */
-    min-height: 250px;
-    /* nunca más pequeño que esto */
-    max-height: 1000px;
-    /* nunca más grande que esto */
-    width: 95%;
-    /* ajusta al ancho de pantalla */
-    margin: 0 auto;
-    /* lo centra */
-    margin-top: 30px;
+  body {
+    overflow: hidden;
   }
 
-  /* Título */
+  #game-container {
+    height: 65vh;
+    min-height: 250px;
+    max-height: 1000px;
+    width: 95%;
+    margin: 30px auto 0 auto;
+  }
+
   #game-title {
     width: 130px;
     margin-top: 30px;
   }
 
-  /* Botón About Me */
   #back-button {
     top: 4px;
     left: 16px;
@@ -327,7 +292,6 @@ body {
     height: 73px;
   }
 
-  /* Botón música */
   #music-button {
     top: 10px;
     right: 3px;
@@ -335,7 +299,6 @@ body {
     height: 64px;
   }
 
-  /* Botón pato */
   #cod-button {
     top: 10px;
     right: 63px;
@@ -343,37 +306,34 @@ body {
     height: 47px;
   }
 
-  /* Marcador */
   #puntos {
     font-size: 14px;
+    font-weight: bold;
     color: rgb(3, 0, 0);
-    font: bold;
   }
 
-  /* Tiburón */
   .seal {
     width: 120px;
   }
 
-  /* Patos */
   .cod {
     width: 25px;
     height: 25px;
   }
 
-  /* Controles móviles */
   #mobile-controls {
     display: flex;
+    justify-content: center;
   }
 
   #mobile-controls button {
     width: 50px;
     height: 50px;
-    font-size: 20px;
+    font-size: 18px;
     background-color: #3654b8;
+    color: #fff;
   }
 
-  /* Portada */
   #cover-screen img {
     width: 90%;
     max-width: 300px;
@@ -382,5 +342,122 @@ body {
   #cover-screen button {
     font-size: 20px;
     padding: 12px 25px;
+  }
+}
+
+/* ===== Landscape Mode (Móviles girados) ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  body {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  #game-container {
+    height: 80vh;
+    max-height: 500px;
+    width: 95%;
+    margin: 10px auto;
+  }
+
+  #game-title {
+    width: 100px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  #puntos {
+    font-size: 12px;
+    margin: 5px 0;
+  }
+
+  #back-button {
+    top: 2px;
+    left: 8px;
+  }
+
+  #back-button img {
+    width: 50px;
+    height: 50px;
+  }
+
+  #music-button {
+    top: 5px;
+    right: 2px;
+    width: 50px;
+    height: 50px;
+  }
+
+  #cod-button {
+    top: 5px;
+    right: 52px;
+    width: 45px;
+    height: 45px;
+  }
+
+  #mobile-controls {
+    bottom: 10px;
+  }
+
+  #mobile-controls button {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  #cover-screen {
+    padding: 10px;
+  }
+
+  #cover-screen img {
+    max-width: 200px;
+    margin-bottom: 10px;
+  }
+
+  #cover-screen button {
+    padding: 10px 20px;
+    font-size: 18px;
+  }
+}
+
+/* ===== Animación de video intro ===== */
+video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+button {
+  font-family: Arial, sans-serif;
+}
+
+#lives-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+#lives-container img {
+  width: 40px;
+  height: 40px;
+}
+
+@media (max-width: 600px) {
+  #lives-container img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  #lives-container {
+    gap: 5px;
+    margin: 5px 0;
+  }
+
+  #lives-container img {
+    width: 25px;
+    height: 25px;
   }
 }
