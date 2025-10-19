@@ -14,7 +14,6 @@ screamSound.volume = 0.7;
 startSound.volume = 0.8;
 liveSound.volume = 0.7;
 
-// Preload sounds
 startSound.load();
 
 // =======================
@@ -25,6 +24,7 @@ let codOn = true;
 let gameInstance = null;
 let introPlayed = false;
 let isLandscape = false;
+let orientationConfirmed = false;
 
 // =======================
 // ===== MOBILE BUTTONS =====
@@ -37,13 +37,23 @@ const mobileButtons = ['up-btn', 'down-btn', 'left-btn', 'right-btn'];
 function checkOrientation() {
   isLandscape = window.innerHeight < window.innerWidth;
   const rotateNotice = document.getElementById('rotate-notice');
+  const coverScreen = document.getElementById('cover-screen');
   
+  // Solo mostrar aviso de rotación en móvil (pantalla <= 900px)
   if (window.innerWidth <= 900) {
     if (!isLandscape) {
+      // Modo portrait - mostrar aviso
       if (rotateNotice) rotateNotice.style.display = 'flex';
+      orientationConfirmed = false;
     } else {
+      // Modo landscape - ocultar aviso, permitir juego
       if (rotateNotice) rotateNotice.style.display = 'none';
+      orientationConfirmed = true;
     }
+  } else {
+    // Desktop - no mostrar aviso
+    if (rotateNotice) rotateNotice.style.display = 'none';
+    orientationConfirmed = true;
   }
 }
 
@@ -54,15 +64,14 @@ window.addEventListener('resize', checkOrientation);
 // ===== MAIN SETUP =====
 // =======================
 document.addEventListener('DOMContentLoaded', () => {
-
   checkOrientation();
 
   const musicButton = document.getElementById('music-button');
-  const aboutButton = document.getElementById('back-button');
+  const backButton = document.getElementById('back-button');
   const codButton = document.getElementById('cod-button');
   const playButton = document.getElementById('play-btn');
 
-  [musicButton, aboutButton, codButton].forEach(b => { if (b) b.style.display = 'none'; });
+  [musicButton, backButton, codButton].forEach(b => { if (b) b.style.display = 'none'; });
   mobileButtons.forEach(id => {
     const btn = document.getElementById(id);
     if (btn) btn.style.display = 'none';
@@ -90,6 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (backButton) {
+    backButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      location.reload();
+    });
+  }
+
   const emojiCursor = document.getElementById("emoji-cursor");
   if (emojiCursor) {
     emojiCursor.style.position = 'absolute';
@@ -102,16 +118,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (playButton) {
     playButton.addEventListener('click', () => {
-      playSound(startSound);
-      startGameFlow();
+      if (orientationConfirmed) {
+        playSound(startSound);
+        startGameFlow();
+      }
     });
   }
 
   document.addEventListener("keydown", (event) => {
     const cover = document.getElementById("cover-screen");
     if (event.key === "Enter" && cover && cover.style.display !== 'none') {
-      playSound(startSound);
-      startGameFlow();
+      if (orientationConfirmed) {
+        playSound(startSound);
+        startGameFlow();
+      }
     }
   });
 
@@ -126,8 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
       gameInstance = new Game();
 
       if (musicButton) musicButton.style.display = 'block';
-      if (aboutButton) aboutButton.style.display = 'flex';
+      if (backButton) backButton.style.display = 'flex';
       if (codButton) codButton.style.display = 'block';
+      
       mobileButtons.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.style.display = 'block';
@@ -140,12 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (!introPlayed) {
-      if (!isLandscape && window.innerWidth <= 900) {
-        const rotateNotice = document.getElementById('rotate-notice');
-        if (rotateNotice) rotateNotice.style.display = 'flex';
-        return;
-      }
-
+      // Mostrar vídeo intro
       const video = document.createElement('video');
       video.src = 'assets/intro.mp4';
       video.style.width = '100%';
@@ -458,6 +474,7 @@ class Game {
     this.score = 0;
     this.timeLeft = 21;
     this.lives = 6;
+    this.livesLost = 0; // Contador de vidas perdidas
 
     this.character = new Character();
     this.container.appendChild(this.character.element);
@@ -470,6 +487,7 @@ class Game {
     this.effects = [];
     this.loopActive = true;
     this.loopRunning = false;
+    this.lastHeartTime = 0; // Para controlar frecuencia de corazones
 
     this.initLivesContainer();
     this.updateLives();
@@ -482,18 +500,12 @@ class Game {
     this.addMobileControls();
     this.moveBackground();
     this.startGameLoop();
-
-    this.heartTimer = setInterval(() => {
-      if (this.lives < 6 && Math.random() < 0.15)
-        this.hearts.push(new Heart(this.container));
-    }, 10000);
   }
 
   destroy() {
     this.loopActive = false;
-    clearInterval(this.heartTimer);
-    clearInterval(this.timer);
     if (this.bgInterval) clearInterval(this.bgInterval);
+    if (this.timer) clearInterval(this.timer);
   }
 
   addAnimationStyles() {
@@ -579,10 +591,12 @@ class Game {
         p.checkBounds();
         if (this.character.collidesWith(p) && !p.hit) {
           this.lives--;
+          this.livesLost++;
           this.updateLives();
           this.createEffect(this.character.x + 40, this.character.y + 40, '#7B2CBF');
           if (musicOn) playSound(screamSound);
           p.hit = true;
+          this.lastHeartTime = Date.now();
           if (this.lives <= 0) {
             this.loopActive = false;
             this.showGameOver();
@@ -599,11 +613,13 @@ class Game {
         o.updatePosition();
         if (this.character.collidesWith(o)) {
           this.lives--;
+          this.livesLost++;
           this.updateLives();
           this.createEffect(this.character.x + 40, this.character.y + 40, '#7B2CBF');
           if (musicOn) playSound(screamSound);
           if (o.element.parentElement) o.element.remove();
           this.obstacles.splice(i, 1);
+          this.lastHeartTime = Date.now();
           if (this.lives <= 0) {
             this.loopActive = false;
             this.showGameOver();
@@ -613,6 +629,16 @@ class Game {
           this.obstacles.splice(i, 1);
         }
       });
+
+      // Sistema mejorado de corazones
+      const now = Date.now();
+      if (this.lives < 6 && this.livesLost >= 3) {
+        // Después de perder 3 vidas, corazones cada 5 segundos
+        if (now - this.lastHeartTime > 5000) {
+          this.hearts.push(new Heart(this.container));
+          this.lastHeartTime = now;
+        }
+      }
 
       this.hearts.forEach((h, i) => {
         if (this.character.collidesWith(h)) {
@@ -781,9 +807,8 @@ class Game {
 
   showGameOver() {
     this.loopActive = false;
-    clearInterval(this.heartTimer);
-    clearInterval(this.bgInterval);
-    clearInterval(this.timer);
+    if (this.bgInterval) clearInterval(this.bgInterval);
+    if (this.timer) clearInterval(this.timer);
 
     const overlay = document.createElement('div');
     overlay.style.position = 'absolute';
@@ -817,31 +842,54 @@ class Game {
     btn.style.borderRadius = '10px';
     btn.style.cursor = 'pointer';
 
+    let restartKeyHandler = null;
+
     const restartGame = () => {
       playSound(startSound);
-      document.removeEventListener('keydown', restartKeyHandler);
+      
+      // Limpiar event listeners
+      if (restartKeyHandler) {
+        document.removeEventListener('keydown', restartKeyHandler);
+      }
+      
+      // Remover overlay completamente
+      if (overlay.parentElement) {
+        overlay.remove();
+      }
+      
+      // Destruir juego actual
       this.destroy();
+      
+      // Limpiar música
       levelSound.pause();
       levelSound.currentTime = 0;
+      
+      // Preparar para nuevo juego
       introPlayed = true;
+      
+      // Reproducir música si está habilitada
       if (musicOn) {
         levelSound.play();
       }
-      new Game();
+      
+      // Crear nueva instancia de juego
+      gameInstance = new Game();
 
       const musicButton = document.getElementById('music-button');
-      const aboutButton = document.getElementById('back-button');
+      const backButton = document.getElementById('back-button');
       const codButton = document.getElementById('cod-button');
+      
       if (musicButton) musicButton.style.display = 'block';
-      if (aboutButton) aboutButton.style.display = 'flex';
+      if (backButton) backButton.style.display = 'flex';
       if (codButton) codButton.style.display = 'block';
+      
       mobileButtons.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.style.display = 'block';
       });
     };
 
-    const restartKeyHandler = (e) => {
+    restartKeyHandler = (e) => {
       if (e.key === 'Enter' && overlay.parentElement) {
         restartGame();
       }
@@ -855,7 +903,7 @@ class Game {
 
   showNextLevel(callback) {
     this.loopActive = false;
-    clearInterval(this.bgInterval);
+    if (this.bgInterval) clearInterval(this.bgInterval);
 
     const overlay = document.createElement('div');
     overlay.style.position = 'absolute';
@@ -889,19 +937,29 @@ class Game {
     btn.style.borderRadius = '10px';
     btn.style.cursor = 'pointer';
 
+    let continueKeyHandler = null;
+
     const continueGame = () => {
       playSound(startSound);
-      document.removeEventListener('keydown', continueKeyHandler);
-      if (overlay.parentElement) overlay.remove();
+      
+      if (continueKeyHandler) {
+        document.removeEventListener('keydown', continueKeyHandler);
+      }
+      
+      if (overlay.parentElement) {
+        overlay.remove();
+      }
+      
       this.loopActive = true;
       this.moveBackground();
       this.startGameLoop();
       this.timeLeft = 21;
       this.showTimer();
+      
       if (callback) callback();
     };
 
-    const continueKeyHandler = (e) => {
+    continueKeyHandler = (e) => {
       if (e.key === 'Enter' && overlay.parentElement) {
         continueGame();
       }

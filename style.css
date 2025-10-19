@@ -63,10 +63,39 @@ body {
   color: #fff;
 }
 
+/* ===== Aviso de rotación ===== */
+#rotate-notice {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  padding: 30px 20px;
+  background: white;
+  border-radius: 20px;
+  text-align: center;
+  z-index: 3000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#rotate-notice p {
+  font-size: 18px;
+  margin: 0;
+  color: #333;
+  font-weight: bold;
+}
+
 /* ===== Imagen de título encima del juego ===== */
 #game-title {
   width: 260px;
   margin-top: 20px;
+  z-index: 10;
+  position: relative;
 }
 
 /* ===== Contenedor del juego ===== */
@@ -87,11 +116,28 @@ body {
   background-size: cover;
 }
 
+/* ===== Lives Container ===== */
+#lives-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+  z-index: 10;
+  position: relative;
+}
+
+#lives-container img {
+  width: 40px;
+  height: 40px;
+}
+
 /* ===== Marcador ===== */
 #puntos {
   font-size: 20px;
   text-align: center;
   margin: 10px 0;
+  position: relative;
+  z-index: 10;
 }
 
 #puntos.warning {
@@ -126,6 +172,12 @@ body {
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+#mobile-controls button:active {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(0.95);
 }
 
 /* ===== Botones fijos arriba ===== */
@@ -138,6 +190,7 @@ body {
   top: 15px;
   left: 60px;
   z-index: 2000;
+  cursor: pointer;
 }
 
 #back-button img {
@@ -146,6 +199,11 @@ body {
   border-radius: 50%;
   border: 2px solid #5ca0d7;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#back-button img:hover {
+  transform: scale(1.05);
 }
 
 #back-button p {
@@ -178,6 +236,11 @@ body {
   top: 25px;
   right: 120px;
   z-index: 2000;
+  transition: transform 0.2s ease;
+}
+
+#cod-button:hover {
+  transform: scale(1.1);
 }
 
 /* === CURSOR === */
@@ -227,6 +290,18 @@ body {
   }
 }
 
+/* ===== Video intro ===== */
+video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+button {
+  font-family: Arial, sans-serif;
+}
+
 /* ===== Responsive Desktop ===== */
 @media (max-width: 900px) {
   #game-container {
@@ -242,13 +317,9 @@ body {
     font-size: 16px;
   }
 
-  .seal {
-    width: 80px;
-  }
-
-  .cod {
-    width: 30px;
-    height: 30px;
+  #lives-container img {
+    width: 35px;
+    height: 35px;
   }
 
   #mobile-controls {
@@ -317,13 +388,9 @@ body {
     color: rgb(3, 0, 0);
   }
 
-  .seal {
-    width: 120px;
-  }
-
-  .cod {
-    width: 25px;
-    height: 25px;
+  #lives-container img {
+    width: 30px;
+    height: 30px;
   }
 
   #mobile-controls {
@@ -347,6 +414,15 @@ body {
   #cover-screen button {
     font-size: 20px;
     padding: 12px 25px;
+  }
+
+  #rotate-notice {
+    width: 90%;
+    padding: 20px;
+  }
+
+  #rotate-notice p {
+    font-size: 16px;
   }
 }
 
@@ -373,6 +449,16 @@ body {
   #puntos {
     font-size: 12px;
     margin: 5px 0;
+  }
+
+  #lives-container {
+    gap: 5px;
+    margin: 5px 0;
+  }
+
+  #lives-container img {
+    width: 25px;
+    height: 25px;
   }
 
   #back-button {
@@ -422,47 +508,13 @@ body {
     padding: 10px 20px;
     font-size: 18px;
   }
-}
 
-/* ===== Animación de video intro ===== */
-video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-button {
-  font-family: Arial, sans-serif;
-}
-
-#lives-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-#lives-container img {
-  width: 40px;
-  height: 40px;
-}
-
-@media (max-width: 600px) {
-  #lives-container img {
-    width: 30px;
-    height: 30px;
-  }
-}
-
-@media (max-height: 500px) and (orientation: landscape) {
-  #lives-container {
-    gap: 5px;
-    margin: 5px 0;
+  #rotate-notice {
+    width: 85%;
+    padding: 15px;
   }
 
-  #lives-container img {
-    width: 25px;
-    height: 25px;
+  #rotate-notice p {
+    font-size: 14px;
   }
 }
