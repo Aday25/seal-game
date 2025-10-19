@@ -25,14 +25,20 @@
     <button id="play-btn">PLAY (ENTER)</button>
   </div>
 
+  <!-- Aviso de rotación para móvil -->
+  <div id="rotate-notice" style="display: none;">
+    <p>📱 Gira tu dispositivo en modo apaisado para una mejor experiencia</p>
+  </div>
+
   <!-- Juego -->
   <img src="assets/title.png" alt="Yuki Title" id="game-title">
+  <div id="lives-container"></div>
   <div id="puntos">Level: 1 | Points: 0 | Time: 21</div>
 
   <div id="game-container">
     <!-- Botón Back -->
-    <a href="back.html" id="back-button" style="display: none;">
-      <img src="assets/back-button.png" alt="About Me">
+    <a href="#" id="back-button" style="display: none;">
+      <img src="assets/back-button.png" alt="Back Button">
     </a>
 
     <!-- Botones de sonido -->
@@ -46,11 +52,6 @@
     <button id="down-btn">▼</button>
     <button id="left-btn">◀</button>
     <button id="right-btn">▶</button>
-  </div>
-
-  <!-- Aviso de rotación para móvil -->
-  <div id="rotate-notice">
-    <p>📱 Gira tu dispositivo en modo apaisado para una mejor experiencia</p>
   </div>
 
   <!-- Script principal -->

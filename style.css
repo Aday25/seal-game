@@ -343,86 +343,135 @@ button {
 
   body {
     overflow: hidden;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
   }
 
-  #game-container {
-    height: 65vh;
-    min-height: 250px;
-    max-height: 1000px;
-    width: 95%;
-    margin: 30px auto 0 auto;
+  #cover-screen {
+    padding: 20px;
+  }
+
+  #cover-screen img {
+    width: 80%;
+    max-width: 250px;
+    margin-bottom: 15px;
+  }
+
+  #cover-screen button {
+    font-size: 18px;
+    padding: 12px 25px;
   }
 
   #game-title {
-    width: 130px;
-    margin-top: 30px;
-  }
-
-  #back-button {
-    top: 4px;
-    left: 16px;
-  }
-
-  #back-button img {
-    width: 73px;
-    height: 73px;
-  }
-
-  #music-button {
-    top: 10px;
-    right: 3px;
-    width: 64px;
-    height: 64px;
-  }
-
-  #cod-button {
-    top: 10px;
-    right: 63px;
-    width: 47px;
-    height: 47px;
+    width: 100px;
+    margin-top: 10px;
+    margin-bottom: 5px;
   }
 
   #puntos {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
-    color: rgb(3, 0, 0);
+    margin: 5px 0;
+    padding: 0 10px;
+  }
+
+  #lives-container {
+    gap: 5px;
+    margin: 5px 0;
+    padding: 0 10px;
   }
 
   #lives-container img {
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
+  }
+
+  #game-container {
+    width: 95%;
+    height: 55vh;
+    min-height: 200px;
+    max-height: 400px;
+    margin: 5px auto 60px auto;
+    border: 5px solid #45adc7;
+  }
+
+  #back-button {
+    top: 5px;
+    left: 10px;
+  }
+
+  #back-button img {
+    width: 50px;
+    height: 50px;
+  }
+
+  #back-button p {
+    display: none;
+  }
+
+  #music-button {
+    top: 8px;
+    right: 8px;
+    width: 45px;
+    height: 45px;
+  }
+
+  #cod-button {
+    top: 8px;
+    right: 55px;
+    width: 40px;
+    height: 40px;
   }
 
   #mobile-controls {
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
     justify-content: center;
+    gap: 5px;
+    bottom: 5px;
+    padding: 0 10px;
   }
 
   #mobile-controls button {
-    width: 50px;
-    height: 50px;
-    font-size: 18px;
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
     background-color: #3654b8;
     color: #fff;
   }
 
-  #cover-screen img {
-    width: 90%;
-    max-width: 300px;
-  }
-
-  #cover-screen button {
-    font-size: 20px;
-    padding: 12px 25px;
-  }
-
   #rotate-notice {
-    width: 90%;
+    width: 85%;
     padding: 20px;
   }
 
   #rotate-notice p {
-    font-size: 16px;
+    font-size: 14px;
+  }
+
+  #game-overlay,
+  #level-overlay {
+    width: 85% !important;
+    max-width: 250px !important;
+    padding: 15px !important;
+  }
+
+  #game-overlay img,
+  #level-overlay img {
+    max-height: 80px !important;
+  }
+
+  #game-overlay button,
+  #level-overlay button {
+    font-size: 12px !important;
+    padding: 8px 15px !important;
+    margin-top: 10px !important;
+  }
+
+  video {
+    max-height: 100%;
   }
 }
 

@@ -37,21 +37,16 @@ const mobileButtons = ['up-btn', 'down-btn', 'left-btn', 'right-btn'];
 function checkOrientation() {
   isLandscape = window.innerHeight < window.innerWidth;
   const rotateNotice = document.getElementById('rotate-notice');
-  const coverScreen = document.getElementById('cover-screen');
   
-  // Solo mostrar aviso de rotación en móvil (pantalla <= 900px)
   if (window.innerWidth <= 900) {
     if (!isLandscape) {
-      // Modo portrait - mostrar aviso
       if (rotateNotice) rotateNotice.style.display = 'flex';
       orientationConfirmed = false;
     } else {
-      // Modo landscape - ocultar aviso, permitir juego
       if (rotateNotice) rotateNotice.style.display = 'none';
       orientationConfirmed = true;
     }
   } else {
-    // Desktop - no mostrar aviso
     if (rotateNotice) rotateNotice.style.display = 'none';
     orientationConfirmed = true;
   }
@@ -142,9 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startGame = () => {
       if (gameInstance) gameInstance.destroy();
-
       gameInstance = new Game();
 
+      const musicButton = document.getElementById('music-button');
+      const backButton = document.getElementById('back-button');
+      const codButton = document.getElementById('cod-button');
+      
       if (musicButton) musicButton.style.display = 'block';
       if (backButton) backButton.style.display = 'flex';
       if (codButton) codButton.style.display = 'block';
@@ -161,14 +159,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (!introPlayed) {
-      // Mostrar vídeo intro
       const video = document.createElement('video');
       video.src = 'assets/intro.mp4';
       video.style.width = '100%';
       video.style.height = '100%';
       video.style.objectFit = 'contain';
+      video.style.display = 'block';
       video.autoplay = true;
       video.controls = false;
+      video.muted = false;
       container.appendChild(video);
 
       const skipBtn = document.createElement('button');
@@ -182,6 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
       skipBtn.style.cursor = 'pointer';
       skipBtn.style.zIndex = '50';
       skipBtn.style.display = 'none';
+      skipBtn.style.backgroundColor = '#FFF';
+      skipBtn.style.border = 'none';
+      skipBtn.style.borderRadius = '10px';
       container.appendChild(skipBtn);
 
       const startBtn = document.createElement('button');
@@ -194,6 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
       startBtn.style.fontSize = '16px';
       startBtn.style.cursor = 'pointer';
       startBtn.style.display = 'none';
+      startBtn.style.backgroundColor = '#FFF';
+      startBtn.style.border = 'none';
+      startBtn.style.borderRadius = '10px';
       container.appendChild(startBtn);
 
       let skipKeyHandler = null;
@@ -203,9 +208,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (skipKeyHandler) {
           document.removeEventListener('keydown', skipKeyHandler);
         }
-        video.remove();
-        skipBtn.remove();
-        startBtn.remove();
+        // Limpiar completamente
+        video.pause();
+        video.src = '';
+        if (video.parentElement) video.remove();
+        if (skipBtn.parentElement) skipBtn.remove();
+        if (startBtn.parentElement) startBtn.remove();
         introPlayed = true;
         startGame();
       };
@@ -217,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       video.addEventListener('play', () => {
         skipBtn.style.display = 'block';
+      });
+
+      video.addEventListener('error', () => {
+        skipAndStart();
       });
 
       skipBtn.addEventListener('click', skipAndStart);
@@ -254,7 +266,9 @@ class Character {
     this.element = document.createElement('img');
     this.element.src = 'assets/seal.gif';
     this.element.style.height = '80px';
+    this.element.style.width = 'auto';
     this.element.style.position = 'absolute';
+    this.element.style.objectFit = 'contain';
 
     this.updatePosition();
   }
@@ -268,6 +282,7 @@ class Character {
     const cw = this.element.parentElement.clientWidth;
     const ch = this.element.parentElement.clientHeight;
 
+    // Wrapping correcto
     if (this.x + this.width < 0) this.x = cw;
     if (this.x > cw) this.x = -this.width;
     if (this.y + this.height < 0) this.y = ch;
@@ -407,7 +422,6 @@ class Heart {
     this.y = Math.random() * (container.clientHeight - 40);
     this.duration = 10000;
     this.createdAt = Date.now();
-    this.isFixed = true;
 
     this.element = document.createElement('img');
     this.element.src = 'assets/heart.png';
@@ -452,7 +466,6 @@ class EffectParticle {
     this.element.style.border = `3px solid ${color}`;
     this.element.style.pointerEvents = 'none';
     this.element.style.animation = `expandAndFade 0.5s ease-out`;
-    this.element.style.setProperty('--effect-color', color);
 
     container.appendChild(this.element);
   }
@@ -474,7 +487,10 @@ class Game {
     this.score = 0;
     this.timeLeft = 21;
     this.lives = 6;
-    this.livesLost = 0; // Contador de vidas perdidas
+    this.livesLost = 0;
+
+    // Limpiar container completamente
+    this.container.innerHTML = '';
 
     this.character = new Character();
     this.container.appendChild(this.character.element);
@@ -487,7 +503,7 @@ class Game {
     this.effects = [];
     this.loopActive = true;
     this.loopRunning = false;
-    this.lastHeartTime = 0; // Para controlar frecuencia de corazones
+    this.lastHeartTime = 0;
 
     this.initLivesContainer();
     this.updateLives();
@@ -506,6 +522,24 @@ class Game {
     this.loopActive = false;
     if (this.bgInterval) clearInterval(this.bgInterval);
     if (this.timer) clearInterval(this.timer);
+    
+    // Limpiar todos los elementos
+    this.visibleCods.forEach(c => {
+      if (c.element.parentElement) c.element.remove();
+      c.stopFloating();
+    });
+    this.plastics.forEach(p => {
+      if (p.element.parentElement) p.element.remove();
+    });
+    this.obstacles.forEach(o => {
+      if (o.element.parentElement) o.element.remove();
+    });
+    this.hearts.forEach(h => {
+      if (h.element.parentElement) h.element.remove();
+    });
+    this.effects.forEach(e => {
+      if (e.element.parentElement) e.element.remove();
+    });
   }
 
   addAnimationStyles() {
@@ -577,12 +611,10 @@ class Game {
   startGameLoop() {
     if (this.loopRunning) return;
     this.loopRunning = true;
-    this._rafId = null;
 
     const loop = () => {
       if (!this.loopActive) {
         this.loopRunning = false;
-        if (this._rafId) cancelAnimationFrame(this._rafId);
         return;
       }
 
@@ -630,10 +662,8 @@ class Game {
         }
       });
 
-      // Sistema mejorado de corazones
       const now = Date.now();
       if (this.lives < 6 && this.livesLost >= 3) {
-        // Después de perder 3 vidas, corazones cada 5 segundos
         if (now - this.lastHeartTime > 5000) {
           this.hearts.push(new Heart(this.container));
           this.lastHeartTime = now;
@@ -662,8 +692,7 @@ class Game {
       });
 
       this.checkCollisions();
-
-      this._rafId = requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     };
 
     loop();
@@ -677,6 +706,7 @@ class Game {
     this.visibleCods.forEach(d => {
       if (this.container && d.element.parentElement)
         this.container.removeChild(d.element);
+      d.stopFloating();
     });
 
     this.allCods = [];
@@ -811,21 +841,26 @@ class Game {
     if (this.timer) clearInterval(this.timer);
 
     const overlay = document.createElement('div');
+    overlay.id = 'game-overlay';
     overlay.style.position = 'absolute';
     overlay.style.left = '50%';
     overlay.style.top = '50%';
     overlay.style.transform = 'translate(-50%,-50%)';
-    overlay.style.width = '250px';
+    overlay.style.width = '280px';
+    overlay.style.maxWidth = '90%';
     overlay.style.padding = '20px';
     overlay.style.backgroundColor = 'red';
     overlay.style.borderRadius = '20px';
     overlay.style.textAlign = 'center';
-    overlay.style.zIndex = '100';
+    overlay.style.zIndex = '1000';
+    overlay.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4)';
 
     const img = document.createElement('img');
     img.src = 'assets/crying-seal.gif';
     img.style.width = '100%';
     img.style.height = 'auto';
+    img.style.maxHeight = '120px';
+    img.style.objectFit = 'contain';
     overlay.appendChild(img);
 
     const text = document.createElement('div');
@@ -833,6 +868,7 @@ class Game {
     text.style.color = 'white';
     text.style.fontSize = '20px';
     text.style.margin = '10px 0';
+    text.style.fontWeight = 'bold';
     overlay.appendChild(text);
 
     const btn = document.createElement('button');
@@ -841,38 +877,33 @@ class Game {
     btn.style.border = 'none';
     btn.style.borderRadius = '10px';
     btn.style.cursor = 'pointer';
+    btn.style.marginTop = '10px';
+    btn.style.backgroundColor = '#FFF';
+    btn.style.fontSize = '14px';
+    btn.style.fontWeight = 'bold';
 
     let restartKeyHandler = null;
 
     const restartGame = () => {
       playSound(startSound);
       
-      // Limpiar event listeners
       if (restartKeyHandler) {
         document.removeEventListener('keydown', restartKeyHandler);
       }
       
-      // Remover overlay completamente
       if (overlay.parentElement) {
         overlay.remove();
       }
       
-      // Destruir juego actual
       this.destroy();
-      
-      // Limpiar música
       levelSound.pause();
       levelSound.currentTime = 0;
-      
-      // Preparar para nuevo juego
       introPlayed = true;
       
-      // Reproducir música si está habilitada
       if (musicOn) {
         levelSound.play();
       }
       
-      // Crear nueva instancia de juego
       gameInstance = new Game();
 
       const musicButton = document.getElementById('music-button');
@@ -906,21 +937,26 @@ class Game {
     if (this.bgInterval) clearInterval(this.bgInterval);
 
     const overlay = document.createElement('div');
+    overlay.id = 'level-overlay';
     overlay.style.position = 'absolute';
     overlay.style.left = '50%';
     overlay.style.top = '50%';
     overlay.style.transform = 'translate(-50%,-50%)';
-    overlay.style.width = '250px';
+    overlay.style.width = '280px';
+    overlay.style.maxWidth = '90%';
     overlay.style.padding = '20px';
     overlay.style.backgroundColor = 'green';
     overlay.style.borderRadius = '20px';
     overlay.style.textAlign = 'center';
-    overlay.style.zIndex = '100';
+    overlay.style.zIndex = '1000';
+    overlay.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4)';
 
     const img = document.createElement('img');
     img.src = 'assets/dancing-seal.gif';
     img.style.width = '100%';
     img.style.height = 'auto';
+    img.style.maxHeight = '120px';
+    img.style.objectFit = 'contain';
     overlay.appendChild(img);
 
     const text = document.createElement('div');
@@ -928,6 +964,7 @@ class Game {
     text.style.color = 'white';
     text.style.fontSize = '20px';
     text.style.margin = '10px 0';
+    text.style.fontWeight = 'bold';
     overlay.appendChild(text);
 
     const btn = document.createElement('button');
@@ -936,6 +973,10 @@ class Game {
     btn.style.border = 'none';
     btn.style.borderRadius = '10px';
     btn.style.cursor = 'pointer';
+    btn.style.marginTop = '10px';
+    btn.style.backgroundColor = '#FFF';
+    btn.style.fontSize = '14px';
+    btn.style.fontWeight = 'bold';
 
     let continueKeyHandler = null;
 
