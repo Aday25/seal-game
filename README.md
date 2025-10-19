@@ -30,7 +30,7 @@ En él controlarás a **Yuki**, la foca glotona que debe comerse todos los bacal
 
 ## 🐟​Personajes🐾
 
-- **Yuki** 🐾: Nuestra foca protagonista, curiosa y glotona, que simboliza la energía y la resiliencia frente a los retos.  
+- **Yuki** 🐾: Nuestra foca protagonista, curiosa y glotona, víctima de la contaminación en los océanos.
 - **Bacalaos** 🐟: El alimento de Yuki, inspirado en su dieta real en Groenlandia.  
 - **Basura marina** 🥤🥫: Botellas, latas y otros elementos que hay que evitar para mantener los océanos limpios.  
 
