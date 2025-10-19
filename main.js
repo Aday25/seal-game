@@ -5,6 +5,7 @@ const codSound = new Audio('assets/bubble-pop.mp3');
 const levelSound = new Audio('assets/underwater.mp3');
 const screamSound = new Audio('assets/scream.mp3');
 const startSound = new Audio('assets/start.mp3');
+const liveSound = new Audio('assets/live.mp3');
 levelSound.loop = true;
 
 // =======================

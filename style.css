@@ -200,10 +200,15 @@ body {
   0% {
     transform: scale(0);
     opacity: 1;
+    box-shadow: 0 0 10px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 30px currentColor;
   }
   100% {
-    transform: scale(1.5);
+    transform: scale(2.5);
     opacity: 0;
+    box-shadow: 0 0 50px currentColor;
   }
 }
 
